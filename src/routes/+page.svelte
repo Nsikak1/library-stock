@@ -1,22 +1,25 @@
 <script lang="ts">
-  import { read, utils, writeFile } from "xlsx";
   import { onMount } from "svelte";
-
-  const numericKeys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+  import { isbnLookup, isRequired, retrieveIsbnNumber } from "./isbn";
+  import SpreadSheet from "./spreadsheet";
 
   interface President {
     Name: string;
     Index: number;
   }
-  let presidents: President[] = $state([]);
-  let log = $state("");
+
+  // svelte-ignore non_reactive_update
+  let sheet: SpreadSheet;
+  let presidents: {}[] = $state([]);
+  let isbnDetails = $state("");
 
   onMount(async () => {
     const eleList = document.querySelectorAll(
       'input[maxlength="1"]'
     ) as NodeListOf<HTMLInputElement>;
     const eleArr = [...eleList];
-    console.log(eleList);
+     sheet = new SpreadSheet("/data/pres.xlsx");
+    await sheet.ready;
 
     eleList.forEach((ele) =>
       ele.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -26,37 +29,68 @@
         const isBackspace = ev.key === "Backspace";
         const nextEle = eleList.item(index + 1);
         const prevEle = eleList.item(index - 1);
+        currElem.classList.remove("required");
 
         ev.preventDefault();
 
         if (isBackspace) {
           currElem.value = "";
-          prevEle.focus();
+          if (prevEle) prevEle.focus();
           return;
         }
         if (!isNaN(num)) {
           if (currElem.value == "") {
           }
           currElem.value = ev.key;
-          nextEle.focus();
+          if (nextEle) nextEle.focus();
         }
         switch (ev.key) {
           case "ArrowLeft":
-            prevEle.focus();
+            if (prevEle) prevEle.focus();
 
             break;
 
           case "ArrowRight":
-            nextEle.focus();
+            if (nextEle) nextEle.focus();
 
             break;
 
           case "ArrowUp":
-            prevEle.focus();
+            if (prevEle) prevEle.focus();
             break;
 
           case "ArrowDown":
-            nextEle.focus();
+            if (nextEle) nextEle.focus();
+            break;
+
+          case "Enter":
+            if (!isRequired(eleList)) return;
+            const isbn = retrieveIsbnNumber(eleList);
+            console.log("isbn: ", isbn);
+
+            (async function () {
+              const isbnDetails = await isbnLookup(isbn);
+              console.log(isbnDetails);
+              const currDetails = {
+                Name: isbnDetails.title as string,
+                Index: isbn,
+              };
+
+              console.log("Author: ", isbnDetails.authors[0].name);
+              console.log("Book Name: ", isbnDetails.title);
+              console.log("Subject: ", isbnDetails.subjects[0].name);
+              console.log("Published on: ", isbnDetails.publish_date);
+              console.log("cover Photo: ", isbnDetails.cover.large);
+
+             
+              presidents = sheet.insertSpreadsheet([
+                isbnDetails.authors[0].name,
+                isbnDetails.title,
+                isbnDetails.publish_date,
+                isbnDetails.subjects[0].name,
+              ])!;
+            })();
+
             break;
 
           default:
@@ -64,6 +98,7 @@
         }
       })
     );
+
     eleList.forEach((ele) =>
       ele.addEventListener("focus", (ev: FocusEvent) => {
         const currElem = ev.target as HTMLInputElement;
@@ -72,55 +107,37 @@
         currElem.value = value;
       })
     );
-
-    
-
-    const res = await fetch("/data/pres.xlsx");
-    const arrayBuffer = await res.arrayBuffer();
-    const workbook = read(arrayBuffer);
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-
-    // normalize keys coming from Excel (e.g. Name, NAME, President) to the interface expected by the component
-    // presidents = raw.map((r, i) => ({
-    //   name: r.name ?? r.Name ?? r.President ?? Object.values(r)[0] ?? '',
-    //   index: Number(r.index ?? r.Index ?? Object.values(r)[1] ?? i)
-    // }));
-
-    console.log(worksheet["!ref"]?.split(":").at(1)?.substring(1));
-
-    const range = utils.decode_range(worksheet["!ref"]!);
-    range.e.c;
-    utils.sheet_add_aoa(worksheet, [["My Name", 23]], { origin: -1 });
-
-    presidents = utils.sheet_to_json(worksheet, { defval: "default" }) as any[];
-
-    console.log("range: ", range);
-
-    console.log("presidents", presidents);
   });
 </script>
 
 <div>
+  <div class="isbn-details">{isbnDetails}</div>
   <table>
     <thead>
       <tr>
-        <th>Name </th>
-        <th>index</th>
+        <th>Author Name </th>
+        <th>Book Name</th>
+        <th>Published on</th>
+        <th>Book Type</th>
       </tr>
     </thead>
 
     <tbody>
       {#each presidents as president}
         <tr>
-          <td>{president.Name}</td>
-          <td>{president.Index}</td>
+          {#each Object.entries(president) as [key, value]}
+            <td>{value}</td>
+          {/each}
         </tr>
       {/each}
     </tbody>
   </table>
 
-  <input type="number" name="1" id="input-1" maxlength="1" />
+  <button onclick={sheet.DownloadSpreadSheet} class="download-excel"
+    >Download Excel Sheet</button
+  >
+
+  <!-- <input type="number" name="1" id="input-1" maxlength="1" /> -->
   <div class="isbn-input">
     <input
       type="text"
@@ -218,6 +235,14 @@
       maxlength="1"
       required
       inputmode="numeric"
+    /><input
+      type="text"
+      class="input-13"
+      name="13"
+      id="input-13"
+      maxlength="1"
+      required
+      inputmode="numeric"
     />
   </div>
 </div>
@@ -230,4 +255,44 @@
     padding: 0.5rem 0.7rem;
     margin: 0.5rem 0.2rem 0;
   }
+
+  :global(.required) {
+    outline: 1px solid red;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+    thead tr {
+      background-color: #009879;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+    }
+  }
+   tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+ tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+  }
+  tbody tr:hover {
+    font-weight: bold;
+    color: #009879;
+}
 </style>
