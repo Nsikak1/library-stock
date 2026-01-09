@@ -27,8 +27,14 @@ export function isRequired(ele: NodeListOf<HTMLInputElement>) {
   return canProceed;
 }
 
+
 export function retrieveIsbnNumber(ele: NodeListOf<HTMLInputElement>) {
   let acc = "";
   ele.forEach((el) => (acc += el.value));
   return parseInt(acc);
+}
+
+export function clearCell(ele: NodeListOf<HTMLInputElement>) {
+  ele.forEach((el) => (el.value = ""));
+  ele[0].focus();
 }

@@ -10,7 +10,7 @@ export default class SpreadSheet {
   worksheet: WorkSheet = {} as WorkSheet;
   sheetName: string = "";
   // worksheet: utils.Sheet | null = null;
-  ready: Promise<void>;
+  ready: Promise<{}[]>;
 
   // Load the workbook asynchronously
   constructor(LinkToFile: string = "/data/pres.xlsx") {
@@ -24,6 +24,11 @@ export default class SpreadSheet {
     this.workbook = read(arrayBuffer);
     this.sheetName = this.workbook.SheetNames[0];
      this.worksheet = this.workbook.Sheets[this.sheetName];
+     const presidents = utils.sheet_to_json(this.worksheet, {
+      defval: "N/A",
+    }) as {}[];
+
+    return presidents; 
   }
 
   // Insert a new row at the end of the spreadsheet
@@ -49,7 +54,7 @@ export default class SpreadSheet {
   }
 
   // Download the updated spreadsheet
-  async DownloadSpreadSheet(): Promise<void> {
+  DownloadSpreadSheet() {
     if (this.workbook) {
       writeFile(this.workbook, "downloaded_pres.xlsx");
     } else {

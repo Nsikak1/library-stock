@@ -1,25 +1,29 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { isbnLookup, isRequired, retrieveIsbnNumber } from "./isbn";
+  import { clearCell, isbnLookup, isRequired, retrieveIsbnNumber } from "./isbn";
   import SpreadSheet from "./spreadsheet";
+  // import "/data/pres.xlsx";
 
   interface President {
     Name: string;
     Index: number;
   }
 
-  // svelte-ignore non_reactive_update
-  let sheet: SpreadSheet;
+  let message: string = $state("");
   let presidents: {}[] = $state([]);
   let isbnDetails = $state("");
+
+  // svelte-ignore non_reactive_update
+  let sheet: SpreadSheet;
 
   onMount(async () => {
     const eleList = document.querySelectorAll(
       'input[maxlength="1"]'
     ) as NodeListOf<HTMLInputElement>;
+      eleList[0].focus();
     const eleArr = [...eleList];
      sheet = new SpreadSheet("/data/pres.xlsx");
-    await sheet.ready;
+    presidents = await sheet.ready;
 
     eleList.forEach((ele) =>
       ele.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -66,28 +70,30 @@
           case "Enter":
             if (!isRequired(eleList)) return;
             const isbn = retrieveIsbnNumber(eleList);
+            clearCell(eleList);
             console.log("isbn: ", isbn);
 
             (async function () {
               const isbnDetails = await isbnLookup(isbn);
-              console.log(isbnDetails);
-              const currDetails = {
-                Name: isbnDetails.title as string,
-                Index: isbn,
-              };
+              if (!isbnDetails) {
+                message = "No details found for the given ISBN.";
+                return;
+              }
+              else {
+                message = "";
+              }
 
-              console.log("Author: ", isbnDetails.authors[0].name);
-              console.log("Book Name: ", isbnDetails.title);
-              console.log("Subject: ", isbnDetails.subjects[0].name);
-              console.log("Published on: ", isbnDetails.publish_date);
-              console.log("cover Photo: ", isbnDetails.cover.large);
+              console.log("Author: ", isbnDetails?.authors?.[0]?.name);
+              console.log("Book Name: ", isbnDetails?.title);
+              console.log("Subject: ", isbnDetails?.subjects?.[0]?.name ?? "N/A");
+              console.log("Published on: ", isbnDetails?.publish_date);
+              console.log("cover Photo: ", isbnDetails?.cover?.large);
 
-             
               presidents = sheet.insertSpreadsheet([
-                isbnDetails.authors[0].name,
-                isbnDetails.title,
-                isbnDetails.publish_date,
-                isbnDetails.subjects[0].name,
+                isbnDetails?.authors?.[0]?.name,
+                isbnDetails?.title,
+                isbnDetails?.publish_date,
+                isbnDetails?.subjects?.[0]?.name ?? "N/A",
               ])!;
             })();
 
@@ -111,7 +117,7 @@
 </script>
 
 <div>
-  <div class="isbn-details">{isbnDetails}</div>
+  <div class="isbn-details">
   <table>
     <thead>
       <tr>
@@ -132,8 +138,9 @@
       {/each}
     </tbody>
   </table>
-
-  <button onclick={sheet.DownloadSpreadSheet} class="download-excel"
+</div>
+  <div class="message">{message}</div>
+  <button onclick={() =>sheet.DownloadSpreadSheet.call(sheet)!} class="download-excel"
     >Download Excel Sheet</button
   >
 
@@ -248,6 +255,17 @@
 </div>
 
 <style>
+  .isbn-details {
+    height: 40vh;
+    overflow-y: auto;
+    position: relative;
+
+  }
+  .isbn-input {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+     }
   input[maxlength="1"] {
     /* background-color: red; */
     width: 1ch;
@@ -268,13 +286,21 @@
     font-family: sans-serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-
+  
     thead tr {
       background-color: #009879;
       color: #ffffff;
       text-align: left;
+      border-radius: 4px 4px 0 0;
+
     }
 
+     thead{
+            position: sticky;
+            top: 0;
+            z-index: 2;
+
+    }
     th,
     td {
       padding: 12px 15px;
@@ -292,7 +318,32 @@
     border-bottom: 2px solid #009879;
   }
   tbody tr:hover {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #009879;
 }
+
+.message {
+  color: red;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+  .download-excel {
+    margin: 1rem auto 0;
+    display: block;    
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #009879;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    width: 20vw;
+  }
+
+  .download-excel:hover {
+    background-color: #007f63;
+  }
 </style>
