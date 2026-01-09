@@ -2,6 +2,10 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
+const dev = process.argv.includes('dev');
+const base = dev ? '' : '/library-stock'; 
+
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   compilerOptions: {
