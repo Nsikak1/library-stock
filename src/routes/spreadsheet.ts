@@ -1,4 +1,5 @@
 import { read, utils, writeFile, type WorkBook, type WorkSheet } from "xlsx";
+import { resolve } from "$app/paths";
 interface President {
   Name: string;
   Index: number;
@@ -13,7 +14,7 @@ export default class SpreadSheet {
   ready: Promise<{}[]>;
 
   // Load the workbook asynchronously
-  constructor(LinkToFile: string = "/data/pres.xlsx") {
+  constructor(LinkToFile: string ) {
     // this.excelLink = LinkToFile;
     this.ready = this.loadWorkbook(LinkToFile);
   }

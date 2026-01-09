@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { clearCell, isbnLookup, isRequired, retrieveIsbnNumber } from "./isbn";
   import SpreadSheet from "./spreadsheet";
+  import { resolve } from "$app/paths";
   // import "/data/pres.xlsx";
 
   interface President {
@@ -22,7 +23,7 @@
     ) as NodeListOf<HTMLInputElement>;
       eleList[0].focus();
     const eleArr = [...eleList];
-     sheet = new SpreadSheet("/data/pres.xlsx");
+     sheet = new SpreadSheet("./data/pres.xlsx");
     presidents = await sheet.ready;
 
     eleList.forEach((ele) =>
