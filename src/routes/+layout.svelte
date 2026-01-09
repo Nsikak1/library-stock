@@ -6,6 +6,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>Library Stock</title>
 </svelte:head>
 
 {@render children()}
