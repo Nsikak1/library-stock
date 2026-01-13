@@ -1,3 +1,5 @@
+import type SpreadSheet from "./spreadsheet";
+
 export async function isbnLookup(isbn: number) {
   console.log("isbn: ", isbn);
   
@@ -37,4 +39,37 @@ export function retrieveIsbnNumber(ele: NodeListOf<HTMLInputElement>) {
 export function clearCell(ele: NodeListOf<HTMLInputElement>) {
   ele.forEach((el) => (el.value = ""));
   ele[0].focus();
+}
+
+export async function handleIsbnLookup(isbn: number, isbnDetails: any, sheet: SpreadSheet, message: string) {
+              
+                isbnDetails = await isbnLookup(isbn);
+                if (!isbnDetails) {
+                  message = "No details found for the given ISBN.";
+                  return;
+                } else {
+                  message = "";
+              }
+              
+
+              const result = sheet.insertSpreadsheet([
+                "N/A",
+                isbnDetails?.title,
+                isbnDetails?.identifiers?.isbn_10
+                  ? isbnDetails?.identifiers?.isbn_10[0]
+                  : isbn,
+                isbnDetails?.subjects?.[0]?.name ?? "N/A",
+                isbnDetails?.authors?.[0]?.name,
+                isbnDetails?.publish_date,
+                isbnDetails?.number_of_pages,
+                isbnDetails?.cover?.large ?? "N/A",
+                isbnDetails?.languages?.[0]?.key
+                  ? isbnDetails?.languages?.[0]?.key
+                      .replace("/languages/", "")
+                      .toUpperCase()
+                  : "English",
+              ])!;
+                return result;
+
+
 }

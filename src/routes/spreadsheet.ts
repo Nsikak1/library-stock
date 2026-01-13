@@ -5,31 +5,43 @@ interface President {
   Index: number;
 }
 
+
 export default class SpreadSheet {
-  //   excelLink: string;
+  private static instance: SpreadSheet;
   workbook: WorkBook | null = null;
   worksheet: WorkSheet = {} as WorkSheet;
   sheetName: string = "";
-  // worksheet: utils.Sheet | null = null;
-  ready: Promise<{}[]>;
+  public  jsonSpreadsheet: {}[] = [];
+
+  public static async init(linkToFile: string) {
+    SpreadSheet.instance = new SpreadSheet();
+    await SpreadSheet.instance.loadWorkbook(linkToFile);
+    return SpreadSheet.instance;
+  }
 
   // Load the workbook asynchronously
-  constructor(LinkToFile: string ) {
-    // this.excelLink = LinkToFile;
-    this.ready = this.loadWorkbook(LinkToFile);
-  }
+  private constructor() {}
 
   private async loadWorkbook(LinkToFile: string) {
     const response = await fetch(LinkToFile);
     const arrayBuffer = await response.arrayBuffer();
     this.workbook = read(arrayBuffer);
     this.sheetName = this.workbook.SheetNames[0];
-     this.worksheet = this.workbook.Sheets[this.sheetName];
-     const presidents = utils.sheet_to_json(this.worksheet, {
+    this.worksheet = this.workbook.Sheets[this.sheetName];
+    this.jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
       defval: "N/A",
     }) as {}[];
 
-    return presidents; 
+    //  = jsonSheet;
+      return this.jsonSpreadsheet;
+  }
+
+  public static getInstance() {
+    return SpreadSheet.instance;
+  }
+
+  public getJsonSpreadsheet() {
+    return this.jsonSpreadsheet;
   }
 
   // Insert a new row at the end of the spreadsheet
@@ -39,25 +51,31 @@ export default class SpreadSheet {
       return;
     }
 
-    // console.log(worksheet["!ref"]?.split(":").at(1)?.substring(1));
+    const worksheet =utils.sheet_add_aoa(this.worksheet, [data], { origin: -1 });
 
-    // const range = utils.decode_range(worksheet["!ref"]!);
-    // console.log("range: ", range);
-    // range.e.c;
-
-    utils.sheet_add_aoa(this.worksheet, [data], { origin: -1 });
-
-    const presidents = utils.sheet_to_json(this.worksheet, {
+    
+     const sheet = utils.sheet_to_json(worksheet, {
       defval: "N/A",
     }) as {}[];
 
-    return presidents;
+    // console.log("SpreadSheet instance: ", SpreadSheet.instance.wo);
+    
+    
+    // return SpreadSheet.jsonSpreadsheet;
+        console.log("data: ", data);
+    console.log("this.worksheet: ", this.worksheet);
+    
+    this.jsonSpreadsheet = sheet;
+    
+    console.log("SpreadSheet.jsonSpreadsheet: ", this.jsonSpreadsheet);
+    return [...sheet];
+
   }
 
   // Download the updated spreadsheet
   DownloadSpreadSheet() {
-    if (this.workbook) {
-      writeFile(this.workbook, "downloaded_pres.xlsx");
+    if (this.workbook) {   
+      writeFile(this.workbook, "backup.xlsx");
     } else {
       console.error("Workbook is not loaded.");
     }
