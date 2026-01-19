@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC QR Connect</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #qrcode {
+            margin: 20px auto;
+            display: inline-block;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .waiting {
+            background: #fff3cd;
+            color: #856404;
+        }
+        #messages {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 200px;
+            text-align: left;
+            background: #f9f9f9;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sent {
+            background: #cfe2ff;
+            text-align: right;
+        }
+        .received {
+            background: #e7f3e7;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #video-container {
+            display: none;
+            margin: 20px 0;
+        }
+        video {
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        #scanArea {
+            display: none;
+        }
+        #answer {
+            width: 90%;
+            height: 150px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebRTC QR Code Connection</h1>
+    
+    <div class="container">
+        <h2>Choose Your Device</h2>
+        <button onclick="initDesktop()">🖥️ I'm on Desktop</button>
+        <button onclick="initPhone()">📱 I'm on Phone</button>
+    </div>
+
+    <div id="desktopView" style="display:none;">
+        <div class="container">
+            <h2>Desktop: Scan this QR Code</h2>
+            <div id="status" class="waiting">Waiting for phone to connect...</div>
+            <div id="qrcode"></div>
+            <p style="font-size: 12px; color: #666;">QR code contains connection offer</p>
+        </div>
+        
+        <div id="scanArea">
+            <div class="container">
+                <h3>Now scan the phone's QR code</h3>
+                <p>The phone will display a QR code with the answer. Use your phone's camera or a QR scanner app to read it, then paste the code here:</p>
+                <textarea id="answer" placeholder="Paste the answer code from phone here..."></textarea>
+                <br>
+                <button onclick="completeConnection()">Complete Connection</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="phoneView" style="display:none;">
+        <div class="container">
+            <h2>Phone: Enter Desktop Code</h2>
+            <div id="status" class="waiting">Waiting to connect...</div>
+            <p>Paste the code from the desktop's QR code:</p>
+            <textarea id="offer" style="width: 90%; height: 150px; font-family: monospace; font-size: 12px;" placeholder="Paste offer code here..."></textarea>
+            <br>
+            <button onclick="connectToDesktop()">Connect</button>
+        </div>
+        
+        <div id="phoneQR" style="display:none;">
+            <div class="container">
+                <h3>Show this QR code to desktop</h3>
+                <div id="answerQR"></div>
+                <p style="font-size: 12px; color: #666;">Desktop needs to scan this to complete connection</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatArea" style="display:none;">
+        <div class="container">
+            <div id="status" class="connected">Connected! 🎉</div>
+            <div id="messages"></div>
+            <div style="margin-top: 20px;">
+                <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pc;
+        let dataChannel;
+        let isDesktop = false;
+
+        const config = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+
+        async function initDesktop() {
+            isDesktop = true;
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('desktopView').style.display = 'block';
+
+            pc = new RTCPeerConnection(config);
+            
+            // Create data channel
+            dataChannel = pc.createDataChannel('chat');
+            setupDataChannel();
+
+            // Handle ICE candidates
+            const candidates = [];
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    candidates.push(event.candidate);
+                }
+            };
+
+            // Create offer
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            // Wait for ICE gathering to complete
+            await new Promise(resolve => {
+                if (pc.iceGatheringState === 'complete') {
+                    resolve();
+                } else {
+                    pc.onicegatheringstatechange = () => {
+                        if (pc.iceGatheringState === 'complete') {
+                            resolve();
+                        }
+                    };
+                }
+            });
+
+            // Create QR code with offer
+            const offerData = JSON.stringify({
+                type: 'offer',
+                sdp: pc.localDescription
+            });
+            
+            new QRCode(document.getElementById('qrcode'), {
+                text: offerData,
+                width: 256,
+                height: 256
+            });
+
+            document.getElementById('scanArea').style.display = 'block';
+        }
+
+        async function completeConnection() {
+            const answerText = document.getElementById('answer').value.trim();
+            if (!answerText) {
+                alert('Please paste the answer code from the phone');
+                return;
+            }
+
+            try {
+                const answerData = JSON.parse(answerText);
+                await pc.setRemoteDescription(new RTCSessionDescription(answerData.sdp));
+                document.getElementById('scanArea').style.display = 'none';
+            } catch (e) {
+                alert('Invalid answer code. Please try again.');
+                console.error(e);
+            }
+        }
+
+        async function initPhone() {
+            isDesktop = false;
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('phoneView').style.display = 'block';
+        }
+
+        async function connectToDesktop() {
+            const offerText = document.getElementById('offer').value.trim();
+            if (!offerText) {
+                alert('Please paste the offer code from desktop');
+                return;
+            }
+
+            try {
+                const offerData = JSON.parse(offerText);
+                
+                pc = new RTCPeerConnection(config);
+                
+                // Handle incoming data channel
+                pc.ondatachannel = (event) => {
+                    dataChannel = event.channel;
+                    setupDataChannel();
+                };
+
+                // Set remote description
+                await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp));
+
+                // Create answer
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+
+                // Wait for ICE gathering
+                await new Promise(resolve => {
+                    if (pc.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        pc.onicegatheringstatechange = () => {
+                            if (pc.iceGatheringState === 'complete') {
+                                resolve();
+                            }
+                        };
+                    }
+                });
+
+                // Create QR code with answer
+                const answerData = JSON.stringify({
+                    type: 'answer',
+                    sdp: pc.localDescription
+                });
+
+                document.getElementById('phoneQR').style.display = 'block';
+                new QRCode(document.getElementById('answerQR'), {
+                    text: answerData,
+                    width: 256,
+                    height: 256
+                });
+
+            } catch (e) {
+                alert('Invalid offer code. Please try again.');
+                console.error(e);
+            }
+        }
+
+        function setupDataChannel() {
+            dataChannel.onopen = () => {
+                document.getElementById('desktopView').style.display = 'none';
+                document.getElementById('phoneView').style.display = 'none';
+                document.getElementById('chatArea').style.display = 'block';
+                addMessage('System', 'Connected successfully!', 'system');
+            };
+
+            dataChannel.onmessage = (event) => {
+                addMessage('Other Device', event.data, 'received');
+            };
+
+            dataChannel.onclose = () => {
+                document.getElementById('status').className = 'disconnected';
+                document.getElementById('status').textContent = 'Disconnected';
+            };
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && dataChannel && dataChannel.readyState === 'open') {
+                dataChannel.send(message);
+                addMessage('You', message, 'sent');
+                input.value = '';
+            }
+        }
+
+        function addMessage(sender, text, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + type;
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>

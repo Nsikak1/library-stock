@@ -14,14 +14,14 @@ export async function googleBooksLookup(isbn: string) {
     return {
       
         title: item.title,
-        authors: item.authors?.map(name => ({ name })) || [],
+        authors: item.authors?.map((name: string) => ({ name })) || [],
         publish_date: item.publishedDate,
         number_of_pages: item.pageCount,
         cover: {
           small: item.imageLinks?.thumbnail,
           large: item.imageLinks?.large
         },
-        subjects: item.categories?.map(cat => ({ name: cat })) || [],
+        subjects: item.categories?.map((cat: string) => ({ name: cat })) || [],
         languages: item.language ? [{ key: `/languages/${item.language}` }] : []
       
     };
@@ -117,7 +117,6 @@ export function retrieveIsbnNumber(ele: NodeListOf<HTMLInputElement>) {
   
   let acc = "";
   ele.forEach((el) => (acc += el.value));
-  console.log("Acc: ", acc);
   return acc;
 }
 

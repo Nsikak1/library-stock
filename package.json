@@ -31,11 +31,13 @@
     "vitest-browser-svelte": "^2.0.1"
   },
   "dependencies": {
+    "@ericblade/quagga2": "^1.12.1",
     "@sveltejs/adapter-static": "^3.0.10",
     "@zxing/library": "^0.21.3",
     "dexie": "^4.2.1",
     "exceljs": "^4.4.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "zxing-wasm": "^2.2.4"
   }
 }

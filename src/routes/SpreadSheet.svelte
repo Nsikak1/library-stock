@@ -20,7 +20,6 @@
               ];
   
   onMount(() => {
-    console.log("mounted");
     sheet = SpreadSheet.getInstance();
   });
 
@@ -30,7 +29,6 @@
       setTimeout(() => {
         const lastTr = document.querySelector("tbody tr:last-of-type");
         lastTr?.scrollIntoView({ behavior: "smooth", block: "end" });
-        console.log("Updated");
       }, 0);
     }
   });

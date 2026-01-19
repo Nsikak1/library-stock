@@ -23,7 +23,6 @@
 const eleList = document.querySelectorAll(
       'input[maxlength="1"]'
     ) as NodeListOf<HTMLInputElement>;
-              console.log(ev.key);
         
         const num = parseInt(ev.key);
         const currElem = ev.target as HTMLInputElement;
@@ -48,7 +47,6 @@ const eleList = document.querySelectorAll(
           if (currElem.value == "") {
           }
           currElem.value = ev.key;
-        console.log("Next Element,", nextEle);
 
           if (nextEle) nextEle.focus();
         }
@@ -83,13 +81,13 @@ const eleList = document.querySelectorAll(
             if (!isRequired(eleList)) return;
             const isbn = retrieveIsbnNumber(eleList);
             clearCell(eleList);
-            console.log("isbn: ", isbn);
+            prefillInput();
             [jsonSpreadsheet, message] = await handleIsbnLookup(
               isbn,
               isbnDetails,
               sheet,
             );
-            console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
+            // console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
             break;
 
           default:
@@ -97,12 +95,7 @@ const eleList = document.querySelectorAll(
         }
   }
 
-  function handleTab(ev: KeyboardEvent) {
-    ev.preventDefault();
-    isbnType = isbnType === 13 ? 10 : 13;
-  }
-
-  $effect(() => {
+  function prefillInput () {
 
     const isbnNodes = document.querySelectorAll("input[maxlength='1']") as NodeListOf<HTMLInputElement>;
 
@@ -127,7 +120,17 @@ const eleList = document.querySelectorAll(
         isbnNodes.item(0).focus();
       }, 0);
     }
-  })
+  }
+
+  function handleTab(ev: KeyboardEvent) {
+    ev.preventDefault();
+    isbnType = isbnType === 13 ? 10 : 13;
+  }
+
+  $effect( () => {
+    prefillInput();
+  });
+
    async function handlePaste (ev: ClipboardEvent, eleArr:  HTMLInputElement[]) {
       ev.preventDefault();
       const pastedText = ev.clipboardData?.getData("text") || "";
@@ -180,11 +183,7 @@ const eleList = document.querySelectorAll(
   });
 
   onMount(() => {
-    // searchISBN('0600331318').then(book => console.log(book));
-
-    const res = [ "The Enchanted Garden Legends and Tales about Trees and Flowers", "ISBN-13: 9780600331315", "ISBN-10: 0600331318", "Author: Paul Wilson", "Binding: Hardcover", "Publisher: Hamlyn", "Published: 1976", "", "Sell this book", "Buy or Rent?" ]
-
-   
+    prefillInput();
 
     const eleList = document.querySelectorAll(
       'input[maxlength="1"]'

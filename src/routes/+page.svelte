@@ -29,11 +29,35 @@
 
   {:else }
   <FileUpload bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} />
+  <div class="or">OR</div>
+  <a class="use-camera" href="camera">Use your camera to add books</a>
   {/if}
  <!-- <SpreadSheet /> -->
 <!-- <Input /> -->
 </div>
 
 <style>
+  .or {
+    text-align: center;
+    margin: 1rem 0;
+  }
+.use-camera {
+  --cur-color: rgb(4, 150, 4);
+  background-color:  rgb(0, 142, 0);
+  color: white;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  border: 1px solid currentColor;
+  display: flex;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: 600;
+  text-align: center;
+  display: block;
 
+  &:hover {
+    background-color: transparent;
+    color: var(--cur-color)
+  }
+}
 </style>
