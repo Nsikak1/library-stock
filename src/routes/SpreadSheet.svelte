@@ -1,26 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import SpreadSheet from "./spreadsheet.ts";
+  import SpreadSheet, {labels} from "./spreadsheet.ts";
 
   let {jsonSpreadsheet = $bindable()} = $props();
 
   const message = $state("");
   let sheet: SpreadSheet;
 
-              const labels = [
-                "ACCESSION NUMBER",
-                "BOOK NAME",
-                "ISBN NUMBER",
-                "BOOK TYPE",
-                "AUTHOR",
-                "PUBLISHED DATE",
-                "NUM OF PAGES",
-                "IMAGE LINKS",
-                "LANGUAGE",
-              ];
+              
   
-  onMount(() => {
+  onMount( async () => {
     sheet = SpreadSheet.getInstance();
+    const data = await sheet.loadFromDatabase();
+    // data.forEach( (row) => {
+    //     delete row.id; // Remove the id field before displaying
+    // });
+    jsonSpreadsheet = data;
+    
   });
 
   $effect(() => {

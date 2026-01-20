@@ -3,10 +3,10 @@
   import {
     clearCell,
     handleIsbnLookup,
-    isbnLookup,
+    openLibApi,
     isRequired,
     retrieveIsbnNumber,
-    searchISBN,
+    checkDB,
   } from "./isbn";
   import SpreadSheet from "./spreadsheet.ts";
   import { any } from "zod";
@@ -18,89 +18,96 @@
   let isbnDetails: any = $state();
   let isAnimating: boolean = $state(false);
 
-  async function handleInput(ev: KeyboardEvent, ) {
-    
-const eleList = document.querySelectorAll(
-      'input[maxlength="1"]'
+  async function handleInput(ev: KeyboardEvent) {
+    const eleList = document.querySelectorAll(
+      'input[maxlength="1"]',
     ) as NodeListOf<HTMLInputElement>;
-        
-        const num = parseInt(ev.key);
-        const currElem = ev.target as HTMLInputElement;
-        // const index = +eleArr.indexOf(currElem);
-        const isBackspace = ev.key === "Backspace";
-        const nextEle = currElem.nextElementSibling as HTMLInputElement;
-        
-        const prevEle = currElem.previousElementSibling as HTMLInputElement;
-        currElem.classList.remove("required");
 
-        if (isBackspace) {
-          ev.preventDefault();
-          if (currElem.value == "") {
-            if (prevEle) prevEle.focus();
-            return;
-          }
-          currElem.value = "";
+    const num = parseInt(ev.key);
+    const currElem = ev.target as HTMLInputElement;
+    // const index = +eleArr.indexOf(currElem);
+    const isBackspace = ev.key === "Backspace";
+    const nextEle = currElem.nextElementSibling as HTMLInputElement;
+
+    const prevEle = currElem.previousElementSibling as HTMLInputElement;
+    currElem.classList.remove("required");
+
+    if (isBackspace) {
+      ev.preventDefault();
+      if (currElem.value == "") {
+        if (prevEle) prevEle.focus();
+        return;
+      }
+      currElem.value = "";
+      return;
+    }
+    if (!isNaN(num)) {
+      ev.preventDefault();
+      if (currElem.value == "") {
+      }
+      currElem.value = ev.key;
+
+      if (nextEle) nextEle.focus();
+    }
+    switch (ev.key) {
+      case "Tab":
+        handleTab(ev);
+        break;
+      case "ArrowLeft":
+        ev.preventDefault();
+        if (prevEle) prevEle.focus();
+
+        break;
+
+      case "ArrowRight":
+        ev.preventDefault();
+        if (nextEle) nextEle.focus();
+
+        break;
+
+      case "ArrowUp":
+        ev.preventDefault();
+        if (prevEle) prevEle.focus();
+        break;
+
+      case "ArrowDown":
+        ev.preventDefault();
+        if (nextEle) nextEle.focus();
+        break;
+
+      case "Enter":
+        ev.preventDefault();
+        if (!isRequired(eleList)) return;
+        const isbn = retrieveIsbnNumber(eleList);
+        clearCell(eleList);
+        prefillInput();
+        const recordExists = await checkDB(isbn);
+
+        if (recordExists) {
+          console.log("Record Exists: ", recordExists);
+          message = `ISBN ${isbn} already exists in the database.`;
           return;
         }
-        if (!isNaN(num)) {
-          ev.preventDefault();
-          if (currElem.value == "") {
-          }
-          currElem.value = ev.key;
+        [jsonSpreadsheet, message] = await handleIsbnLookup(
+          isbn,
+          isbnDetails,
+          sheet,
+        );
+        // console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
+        break;
 
-          if (nextEle) nextEle.focus();
-        }
-        switch (ev.key) {
-          case "Tab":
-            handleTab(ev);
-            break;
-          case "ArrowLeft":
-            ev.preventDefault();
-            if (prevEle) prevEle.focus();
-
-            break;
-
-          case "ArrowRight":
-            ev.preventDefault();
-            if (nextEle) nextEle.focus();
-
-            break;
-
-          case "ArrowUp":
-            ev.preventDefault();
-            if (prevEle) prevEle.focus();
-            break;
-
-          case "ArrowDown":
-            ev.preventDefault();
-            if (nextEle) nextEle.focus();
-            break;
-
-          case "Enter":
-            ev.preventDefault();
-            if (!isRequired(eleList)) return;
-            const isbn = retrieveIsbnNumber(eleList);
-            clearCell(eleList);
-            prefillInput();
-            [jsonSpreadsheet, message] = await handleIsbnLookup(
-              isbn,
-              isbnDetails,
-              sheet,
-            );
-            // console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
-            break;
-
-          default:
-            break;
-        }
+      default:
+        break;
+    }
   }
 
-  function prefillInput () {
+  function prefillInput() {
+    const isbnNodes = document.querySelectorAll(
+      "input[maxlength='1']",
+    ) as NodeListOf<HTMLInputElement>;
 
-    const isbnNodes = document.querySelectorAll("input[maxlength='1']") as NodeListOf<HTMLInputElement>;
-
-    if(isbnType === 13) {
-      const isbnFirstNumber = [9,7,8]
+    if (isbnType === 13) {
+      const isbnFirstNumber = [9, 7, 8];
 
       for (let ind = 0; ind < 3; ind++) {
         isbnNodes.item(ind).value = isbnFirstNumber[ind].toString();
@@ -109,12 +116,11 @@ const eleList = document.querySelectorAll(
       setTimeout(() => {
         isbnNodes.item(3).focus();
       }, 0);
-
     }
     if (isbnType === 10) {
-    for (let ind = 0; ind < 10; ind++) {
+      for (let ind = 0; ind < 10; ind++) {
         isbnNodes.item(ind).value = "";
-    }
+      }
       // Schedule focus after DOM update
       setTimeout(() => {
         isbnNodes.item(0).focus();
@@ -127,50 +133,55 @@ const eleList = document.querySelectorAll(
     isbnType = isbnType === 13 ? 10 : 13;
   }
 
-  $effect( () => {
+  $effect(() => {
     prefillInput();
   });
 
-   async function handlePaste (ev: ClipboardEvent, eleArr:  HTMLInputElement[]) {
-      ev.preventDefault();
-      const pastedText = ev.clipboardData?.getData("text") || "";
-      console.log("pasted Text Raw: ", pastedText);
-      
-      const digits = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
+  async function handlePaste(ev: ClipboardEvent, eleArr: HTMLInputElement[]) {
+    ev.preventDefault();
+    const pastedText = ev.clipboardData?.getData("text") || "";
+    console.log("pasted Text Raw: ", pastedText);
 
-      if (digits.length > 0) {
-        isAnimating = true;
+    const isbn = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
 
-        // Fill in the ISBN digits
-        for (let i = 0; i < digits.length && i < eleArr.length; i++) {
-          eleArr[i].value = digits[i];
-          eleArr[i].classList.add("paste-fill");
+    if (isbn.length > 0) {
+      isAnimating = true;
 
-          // Remove animation class after animation completes
-          setTimeout(
-            () => {
-              eleArr[i].classList.remove("paste-fill");
-            },
-            300 * (i + 1)
+      // Fill in the ISBN digits
+      for (let i = 0; i < isbn.length && i < eleArr.length; i++) {
+        eleArr[i].value = isbn[i];
+        eleArr[i].classList.add("paste-fill");
+
+        // Remove animation class after animation completes
+        setTimeout(
+          () => {
+            eleArr[i].classList.remove("paste-fill");
+          },
+          100 * (i + 1),
+        );
+      }
+
+      // If all fields are filled, trigger lookup
+      if (isbn.length === 13) {
+        setTimeout(async () => {
+          const recordExists = await checkDB(isbn);
+          if (recordExists) {
+            console.log("Record Exists: ", recordExists);
+            message = `ISBN ${isbn} already exists in the database.`;
+            return;
+          }
+          [jsonSpreadsheet, message] = await handleIsbnLookup(
+            isbn,
+            isbnDetails,
+            sheet,
           );
-        }
-
-        // If all fields are filled, trigger lookup
-        if (digits.length === 13) {
-          setTimeout(async () => {
-         [jsonSpreadsheet, message] = await handleIsbnLookup(
-              digits,
-              isbnDetails,
-              sheet,
-            );
-            isAnimating = false;
-          }, 300 * digits.length);
-        } else {
           isAnimating = false;
-        }
+        }, 200 * isbn.length);
+      } else {
+        isAnimating = false;
       }
     }
-
+  }
 
   // svelte-ignore non_reactive_update
   let sheet: SpreadSheet;
@@ -178,7 +189,7 @@ const eleList = document.querySelectorAll(
     if (message) {
       setTimeout(() => {
         message = "";
-      }, 3000);
+      }, 4000);
     }
   });
 
@@ -186,29 +197,25 @@ const eleList = document.querySelectorAll(
     prefillInput();
 
     const eleList = document.querySelectorAll(
-      'input[maxlength="1"]'
+      'input[maxlength="1"]',
     ) as NodeListOf<HTMLInputElement>;
     const eleArr = [...eleList];
     sheet = SpreadSheet.getInstance();
-  
-  //set cursor at end of input on focus
+
+    //set cursor at end of input on focus
     eleList.forEach((ele) =>
       ele.addEventListener("focus", (ev: FocusEvent) => {
         const currElem = ev.target as HTMLInputElement;
         const value = currElem.value;
         currElem.value = "";
         currElem.value = value;
-      })
+      }),
     );
 
     // Handle paste event
     window.addEventListener("paste", (event) => {
-      handlePaste(
-        event as ClipboardEvent,
-        eleArr
-      );
-    }
-   );
+      handlePaste(event as ClipboardEvent, eleArr);
+    });
   });
 </script>
 
@@ -216,26 +223,23 @@ const eleList = document.querySelectorAll(
 
 <!-- <input type="number" name="1" id="input-1" maxlength="1" /> -->
 <div class="isbn-input">
-
-<div class="isbn-type">ISBN-{isbnType}: </div>
-{#each {length: isbnType} as _, num}
-
- <!-- {#if isbnType === 10 && (num === 1 || num === 4 || num === 9)}<span class="dash">-</span>
+  <div class="isbn-type">ISBN-{isbnType}:</div>
+  {#each { length: isbnType } as _, num}
+    <!-- {#if isbnType === 10 && (num === 1 || num === 4 || num === 9)}<span class="dash">-</span>
  {:else   if isbnType === 13 && (num === 3 || num === 5 || num === 8 || num === 12)}<span class="dash">-</span>
  {/if}  -->
-  <input
-    onkeydown={handleInput}
-    type="text"
-    class="input-{num+1}"
-    name={num.toString()}
-    id="input-{num+1}"
-    maxlength="1"
-    required
-    inputmode="numeric"
-  />
-{/each}
+    <input
+      onkeydown={handleInput}
+      type="text"
+      class="input-{num + 1}"
+      name={num.toString()}
+      id="input-{num + 1}"
+      maxlength="1"
+      required
+      inputmode="numeric"
+    />
+  {/each}
 </div>
-
 
 <style>
   .isbn-input {
@@ -248,10 +252,9 @@ const eleList = document.querySelectorAll(
     font-weight: bold;
     margin-right: 0.5rem;
     font-size: large;
-    color:  #009879;
-        margin: 0.5rem 1rem 0.2rem 0;
-
-  } 
+    color: #009879;
+    margin: 0.5rem 1rem 0.2rem 0;
+  }
   input[maxlength="1"] {
     /* background-color: red; */
     width: 1ch;
@@ -295,6 +298,6 @@ const eleList = document.querySelectorAll(
     font-size: 3rem;
     margin: 0rem 0.3rem 0.2rem;
     /* line-height: 1; */
-    color:  #009879;
+    color: #009879;
   }
 </style>

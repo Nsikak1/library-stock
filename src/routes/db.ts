@@ -8,7 +8,7 @@ interface Friend {
 }
 
 interface ISpreadsheetData {
-    // id: number,
+    // id?: number,
     accession: string,
     book_name: string,
     isbn: string,
@@ -24,6 +24,7 @@ interface ISpreadsheetData {
 
 // Define the target keys in order
 export const spreadsheetKeys: (keyof ISpreadsheetData)[] = [
+  // 'id',
   'accession',
   'book_name',
   'isbn',
@@ -35,19 +36,26 @@ export const spreadsheetKeys: (keyof ISpreadsheetData)[] = [
   'language'
 ];
 
+export interface ISettings {
+  key: string;
+  renderSpreadsheet: boolean,
+}
 
 const db = new Dexie("SpreadsheetDatabase") as Dexie & {
   spreadsheets: EntityTable<
     ISpreadsheetData
-    //"id"  primary key "id" (for the typings only)
-
-  >
+   // "id"  //primary key "id" (for the typings only)
+  >,
+  settings: EntityTable<ISettings>
 }
 
 // Schema declaration:
 db.version(1).stores({
-  spreadsheets: " accession, book_name, isbn, book_type, author, published, num_of_pages, image_links, language", // primary key "id" (for the runtime!)
+  spreadsheets: "&isbn, accession, book_name, book_type, author, published, num_of_pages, image_links, language", // primary key "accession"
 })
+db.version(1).stores({
+  settings: "key" // primary key "key"
+});
 
 export type { ISpreadsheetData }
 export { db }

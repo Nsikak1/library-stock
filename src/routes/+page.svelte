@@ -1,8 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { browser, dev } from "$app/environment";
   import Input from "./input.svelte"
   import SpreadSheet from "./SpreadSheet.svelte";
-  import FileUpload from "./file-upload.svelte"
+  import FileUpload from "./file-upload.svelte";
+  import CreateSpreadSheet from "./createSpreadsheet.svelte";
+  import { db,type ISettings } from "./db";
 
   interface President {
     Name: string;
@@ -12,14 +15,18 @@
   let message: string = $state("");
   let presidents: {}[] = $state([]);
   let isbnDetails = $state("");
-  let renderSpreadsheet: boolean = $state(false);
-    let jsonSpreadsheet = $state<{}[]>([]);
+  let renderSpreadsheet = $state(false);
+  let jsonSpreadsheet = $state<{}[]>([]);
 
+    if (browser) {
+      const storedValue = localStorage.getItem("renderSpreadsheet");
+      renderSpreadsheet = storedValue === "true" ? true : false;
+    } else if (dev) {
+      console.log("Not in browser environment");
+      renderSpreadsheet = true;
+    }
+  
 
-  // svelte-ignore non_reactive_update
-  // let sheet: SpreadSheet;
-
-    
 </script>
 
 <div>
@@ -28,7 +35,8 @@
   <Input bind:jsonSpreadsheet={jsonSpreadsheet} />
 
   {:else }
-  <FileUpload bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} />
+  <!-- <FileUpload bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} /> -->
+  <CreateSpreadSheet bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} />
   <div class="or">OR</div>
   <a class="use-camera" href="camera">Use your camera to add books</a>
   {/if}
