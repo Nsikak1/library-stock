@@ -1,6 +1,10 @@
 <script lang="ts">
     import {readBarcodes, type ReaderOptions} from "zxing-wasm/reader";
   import { onMount } from "svelte";
+  import { io } from "socket.io-client";
+
+let inputEle: HTMLInputElement;
+  let message = $state("");
   const constraints = {
   video: {
     facingMode: "environment"
@@ -11,6 +15,58 @@ const readerOptions: ReaderOptions = {
 //   formats: ["QRCode"],
   maxNumberOfSymbols: 1,
 };
+
+
+// 1. Connect to the 'chat' namespace
+const socket = io("http://localhost:3000/chat", {
+  transports: ["websocket"], // Optional: force WebSocket for performance
+});
+
+const signalSocket = io("http://localhost:3000/signal", {
+    transports: ["websocket"],
+});
+
+signalSocket.on("connect", () => {
+    console.log(`Connected to the signal server section with client id: ${signalSocket}`);
+
+    console.log(signalSocket);
+    
+    signalSocket.on("new_message", (data) => {
+        console.log(data);
+        
+    })
+    
+})
+
+// 2. Listen for connection success
+socket.on("connect", () => {
+  console.log("Connected with ID:", socket.id);
+  
+  // Join a specific room immediately after connecting
+  socket.emit("join_room", { room: "room-101" });
+});
+
+// 3. Listen for incoming messages from the server
+socket.on("new_message", (data) => {
+  console.log("New message received:", data);
+  // Logic to update your UI (e.g., append to a list)
+});
+
+// 4. Function to send a message
+function sendMessage(text: string) {
+  const payload = {
+    message: text,
+    room: "room-101"
+  };
+  
+  // 'send_message' matches the @SubscribeMessage in NestJS
+  signalSocket.emit("send_message", payload, (response) => {
+    console.log("signal Server acknowledged:", response);
+  });
+}
+
+
+
 
 
   function getCamera(event: Event) {
@@ -56,16 +112,14 @@ const readerOptions: ReaderOptions = {
         }
     }
     onMount(() => {
-
-  
-    console.log(
-        "Hi"
-    )
-
+        
+      
     })
  
 </script>
 
+ 
+     
 <main class="camera-container">
 
     <video  id="scanner" width="400" height="320" autoplay></video>
@@ -73,4 +127,14 @@ const readerOptions: ReaderOptions = {
     <button onclick={takePicture} id="camera-button">Take a picture</button>
     <canvas id="video-feed" width="400" height="320"></canvas>
     <div class="hi">Hi</div>
+
+    <input bind:this={inputEle} id="send-message" bind:value={message} type="text">
+    <button onclick={() => {
+        sendMessage(inputEle.value)
+    }} >Send Message</button>
 </main>
+
+<style>
+  
+  
+</style>
