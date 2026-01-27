@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import excelSvg from "../../data/excel-icon-old.svg";
-  import SpreadSheet from "./spreadsheet";
+  import SpreadSheet from "./spreadsheet/sheetUtils.svelte";
 
     let {renderSpreadsheet = $bindable(), jsonSpreadsheet = $bindable()} = $props();
         

@@ -1,33 +1,30 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import excelSvg from "../../data/excel-icon-old.svg";
-  import SpreadSheet from "./spreadsheet";
-
-  let { renderSpreadsheet = $bindable(), jsonSpreadsheet = $bindable() } =
-    $props();
-
-  onMount(() => {
-    const createButton = document.getElementById(
-      "spreadsheet-create-button",
-    ) as HTMLButtonElement;
-
-    createButton.addEventListener("click", () => {
-        console.log("Clicked");
-        const spreadsheet = SpreadSheet.getInstance();
-        renderSpreadsheet = true;
-        localStorage.setItem("renderSpreadsheet", "true");
-    })
-
-  });
+  import SpreadSheet from "./spreadsheet/sheetUtils.svelte";
+let { firstRun = $bindable(), renderSpreadsheet = $bindable() } = $props();
+  let  createButton: HTMLButtonElement;
+  const handleClick = () => {
+ 
+      console.log("Clicked");
+      const spreadsheet = SpreadSheet.getInstance();
+      renderSpreadsheet = true;
+      firstRun = false;
+      localStorage.setItem("renderSpreadsheet", "true");
+    };
 </script>
 
-<button class="custom-dashed-border" id="spreadsheet-create-button">
+<button onclick={handleClick} bind:this={createButton} class="custom-dashed-border" id="spreadsheet-create-button">
   <img
     id="excel-logo"
     src={excelSvg}
     alt="upload your excel file by drag and drop"
   />
+  {#if !renderSpreadsheet}
   <span>Click here to create a new spreadsheet</span>
+  {:else}
+    <span>Click here to to continue your work</span>
+{/if}
 </button>
 
 <style>

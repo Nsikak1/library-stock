@@ -1,28 +1,33 @@
 import { read, utils, writeFile, type WorkBook, type WorkSheet } from "xlsx";
 import { resolve } from "$app/paths";
-import { db, type ISpreadsheetData, spreadsheetKeys } from "./db";
+import { db, type ISpreadsheetData, spreadsheetKeys } from "../db";
+
+export const spreadsheetState = $state({
+    data: [] as {}[]
+});
+
 interface President {
   Name: string;
   Index: number;
 }
 export const labels = [
-                "ACCESSION NUMBER",
-                "BOOK NAME",
-                "ISBN NUMBER",
-                "BOOK TYPE",
-                "AUTHOR",
-                "PUBLISHED DATE",
-                "NUM OF PAGES",
-                "IMAGE LINKS",
-                "LANGUAGE",
-              ];
+  "ACCESSION NUMBER",
+  "BOOK NAME",
+  "ISBN NUMBER",
+  "BOOK TYPE",
+  "AUTHOR",
+  "PUBLISHED DATE",
+  "NUM OF PAGES",
+  "IMAGE LINKS",
+  "LANGUAGE",
+];
 
 export default class SpreadSheet {
   private static instance: SpreadSheet;
   workbook: WorkBook | null = null;
   worksheet: WorkSheet = {} as WorkSheet;
   sheetName: string = "";
-  public jsonSpreadsheet: {}[] = [];
+  public m_jsonSpreadsheet: {}[] = [];
 
   private constructor() {}
 
@@ -34,19 +39,19 @@ export default class SpreadSheet {
       db.spreadsheets.toArray().then((records) => {
         this.workbook = utils.book_new();
         this.worksheet = utils.json_to_sheet(records);
-        utils.book_append_sheet(this.workbook, this.worksheet, "Books");  
-        // this.jsonSpreadsheet = records;
+        utils.book_append_sheet(this.workbook, this.worksheet, "Books");
+        // this.m_jsonSpreadsheet = records;
       });
       return;
     }
     this.workbook = utils.book_new();
     this.worksheet = utils.aoa_to_sheet([spreadsheetKeys]);
     utils.book_append_sheet(this.workbook, this.worksheet, "Books");
-    this.jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
+    this.m_jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
       defval: "N/A",
     }) as ISpreadsheetData[];
     localStorage.setItem("renderSpreadsheet", "true");
-    // return this.jsonSpreadsheet;
+    // return this.m_jsonSpreadsheet;
   }
 
   public static init(linkToFile: string = "") {
@@ -84,13 +89,13 @@ export default class SpreadSheet {
 
         // Add worksheet to workbook
         utils.book_append_sheet(this.workbook, this.worksheet, "Books");
-        this.jsonSpreadsheet = existingRecords;
+        this.m_jsonSpreadsheet = existingRecords;
         console.log(
           "Loaded Existing Data Form Database: ",
-          this.jsonSpreadsheet,
+          this.m_jsonSpreadsheet,
         );
 
-        return this.jsonSpreadsheet;
+        return this.m_jsonSpreadsheet;
       }
     } catch (error) {
       console.error("Error checking IndexedDB:", error);
@@ -102,16 +107,16 @@ export default class SpreadSheet {
     this.workbook = read(arrayBuffer);
     this.sheetName = this.workbook.SheetNames[0];
     this.worksheet = this.workbook.Sheets[this.sheetName];
-    this.jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
+    this.m_jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
       defval: "N/A",
     }) as {}[];
 
     // Load spreadsheet data to database
     try {
       console.log("Storing spreadsheet data to database...");
-      console.log(this.jsonSpreadsheet);
+      console.log(this.m_jsonSpreadsheet);
 
-      const records = this.mapToSpreadsheetData(this.jsonSpreadsheet);
+      const records = this.mapToSpreadsheetData(this.m_jsonSpreadsheet);
 
       console.log("Records to be added to the database: ", records);
       console.log("Record[0] to be added to the database: ", records[0]);
@@ -122,7 +127,7 @@ export default class SpreadSheet {
       console.error("Error loading data to IndexedDB:", error);
     }
 
-    return this.jsonSpreadsheet;
+    return this.m_jsonSpreadsheet;
   }
 
   public static getInstance() {
@@ -133,14 +138,14 @@ export default class SpreadSheet {
   }
 
   public getJsonSpreadsheet() {
-    return this.jsonSpreadsheet;
+    return this.m_jsonSpreadsheet;
   }
 
   public async loadFromDatabase() {
     const arr = await db.spreadsheets.toArray();
-    console.log ("In Database: ", arr);
+    this.m_jsonSpreadsheet = arr;
+    console.log("In Database: ", arr);
     return arr;
-    
   }
 
   // Insert a new row at the end of the spreadsheet
@@ -158,7 +163,7 @@ export default class SpreadSheet {
       defval: "N/A",
     }) as {}[];
 
-    this.jsonSpreadsheet = sheet;
+    this.m_jsonSpreadsheet = sheet;
     console.log(" Outside Saving new data to IndexedDB...");
 
     // Save the data to IndexedDB using Dexie
@@ -184,30 +189,92 @@ export default class SpreadSheet {
 
     // console.log("data: ", data);
     // console.log("this.worksheet: ", this.worksheet);
-    // console.log("SpreadSheet.jsonSpreadsheet: ", this.jsonSpreadsheet);
+    // console.log("SpreadSheet.jsonSpreadsheet: ", this.m_jsonSpreadsheet);
     return [...sheet];
+  }
+
+  public updateSpreadsheet(isbn: string, accession: string = "N/A") {
+    if (!this.workbook) {
+      console.error("Workbook is not loaded yet.");
+      return;
+    }
+
+    console.log("jsonSpreadsheet", this.m_jsonSpreadsheet);
+
+    const rowIndex = this.findRowIndexByIsbn(isbn);
+    if (rowIndex === -1) {
+      console.error("Cannot update, ISBN not found:", isbn);
+      return;
+    }
+    console.log("isbn found has rowIndex: ", rowIndex);
+
+    const excelRowIndex = rowIndex + 1;
+    // const spreadsheetRow = util
+
+    utils.sheet_add_aoa(this.worksheet, [[accession]], {
+      origin: { r: excelRowIndex, c: 0 },
+    });
+
+    const sheet = utils.sheet_to_json(this.worksheet, {
+      defval: "N/A",
+    }) as {}[];
+
+    this.m_jsonSpreadsheet = sheet;
+    this.renderSpreadsheet();
+    this.scrollToView(rowIndex);
+
+  }
+
+  public renderSpreadsheet() {
+    spreadsheetState.data =[...this.m_jsonSpreadsheet];
+  }
+
+  private findRowIndexByIsbn(isbn: string): number {
+   const rowIndex = this.m_jsonSpreadsheet.findIndex(
+      (row: any) => row["isbn"] === isbn,
+    );
+    if (rowIndex === -1) {
+      console.error("Row with the given ISBN not found.");
+    }
+    return rowIndex;
+
+  }
+  public scrollToView(index: number = -1) {
+      // Use setTimeout to ensure DOM has updated
+      const tbody = document.querySelector('tbody')
+      const trEle = tbody?.childNodes;
+      const ele = trEle?.item(index) as HTMLTableRowElement;
+      if (index === -1) {
+        tbody?.lastElementChild?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+      setTimeout(() => {
+        ele?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 0);
   }
 
   // Download the updated spreadsheet
   DownloadSpreadSheet() {
-const spreadsheetSize = [
-  { wch: 10 },
-  { wch: 50 },
-  { wch: 18 },
-  { wch: 50 },
-  { wch: 18 },
-  { wch: 10 },
-  { wch: 15 },
-  { wch: 25 },
-  { wch: 10 }
-];
-
+    const spreadsheetSize = [
+      { wch: 10 },
+      { wch: 50 },
+      { wch: 18 },
+      { wch: 50 },
+      { wch: 18 },
+      { wch: 10 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 10 },
+    ];
 
     if (this.workbook) {
-      this.worksheet['!cols'] = spreadsheetSize;
+      this.worksheet["!cols"] = spreadsheetSize;
       let workbook = utils.book_new();
-      let sheetName = utils.book_append_sheet(workbook, this.worksheet, "Books");
-      utils.sheet_add_aoa(this.worksheet, [labels], {origin: 0});
+      let sheetName = utils.book_append_sheet(
+        workbook,
+        this.worksheet,
+        "Books",
+      );
+      utils.sheet_add_aoa(this.worksheet, [labels], { origin: 0 });
       writeFile(workbook, "backup.xlsx");
     } else {
       console.error("Workbook is not loaded.");

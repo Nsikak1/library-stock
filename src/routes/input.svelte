@@ -8,15 +8,29 @@
     retrieveIsbnNumber,
     checkDB,
   } from "./isbn";
-  import SpreadSheet from "./spreadsheet.ts";
-  import { any } from "zod";
+  import SpreadSheet from "./spreadsheet/sheetUtils.svelte.ts";
+  import { db, type ISpreadsheetData } from "./db.ts";
+  // let { jsonSpreadsheet = $bindable() } = $props();
+  let { message = $bindable() } = $props();
 
-  let { jsonSpreadsheet = $bindable() } = $props();
-  let message: any = $state();
+  let isbnFound = $state({
+    value: false,
+    isbn: "",
+  });
   let isbnType: 13 | 10 = $state(13);
 
-  let isbnDetails: any = $state();
+  // let isbnDetails: any = $state();
   let isAnimating: boolean = $state(false);
+  // svelte-ignore non_reactive_update
+    let accessionInput: HTMLInputElement;
+
+  async function handleSearch() {
+    const eleList = document.querySelectorAll(
+      'input[maxlength="1"]',
+    ) as NodeListOf<HTMLInputElement>;
+    isbnFound.isbn  = retrieveIsbnNumber(eleList);
+    message = await handleIsbnLookup(isbnFound.isbn);
+  }
 
   async function handleInput(ev: KeyboardEvent) {
     const eleList = document.querySelectorAll(
@@ -78,21 +92,17 @@
       case "Enter":
         ev.preventDefault();
         if (!isRequired(eleList)) return;
-        const isbn = retrieveIsbnNumber(eleList);
+        isbnFound.isbn = retrieveIsbnNumber(eleList);
         clearCell(eleList);
         prefillInput();
-        const recordExists = await checkDB(isbn);
+        const recordExists = await checkDB(isbnFound.isbn);
 
-        if (recordExists) {
-          console.log("Record Exists: ", recordExists);
-          message = `ISBN ${isbn} already exists in the database.`;
-          return;
-        }
-        [jsonSpreadsheet, message] = await handleIsbnLookup(
-          isbn,
-          isbnDetails,
-          sheet,
-        );
+        // if (recordExists) {
+        //   console.log("Record Exists: ", recordExists);
+        //   message = `ISBN ${isbn} already exists in the database.`;
+        //   return;
+        // }
+        message = await handleIsbnLookup(isbnFound.isbn);
         // console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
         break;
 
@@ -142,14 +152,14 @@
     const pastedText = ev.clipboardData?.getData("text") || "";
     console.log("pasted Text Raw: ", pastedText);
 
-    const isbn = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
+     isbnFound.isbn = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
 
-    if (isbn.length > 0) {
+    if (isbnFound.isbn.length > 0) {
       isAnimating = true;
 
       // Fill in the ISBN digits
-      for (let i = 0; i < isbn.length && i < eleArr.length; i++) {
-        eleArr[i].value = isbn[i];
+      for (let i = 0; i < isbnFound.isbn.length && i < eleArr.length; i++) {
+        eleArr[i].value = isbnFound.isbn[i];
         eleArr[i].classList.add("paste-fill");
 
         // Remove animation class after animation completes
@@ -162,21 +172,17 @@
       }
 
       // If all fields are filled, trigger lookup
-      if (isbn.length === 13) {
+      if (isbnFound.isbn.length === 13 || isbnFound.isbn.length === 10 || isbnFound.isbn.length === 9) {
         setTimeout(async () => {
-          const recordExists = await checkDB(isbn);
-          if (recordExists) {
-            console.log("Record Exists: ", recordExists);
-            message = `ISBN ${isbn} already exists in the database.`;
-            return;
-          }
-          [jsonSpreadsheet, message] = await handleIsbnLookup(
-            isbn,
-            isbnDetails,
-            sheet,
-          );
+          // const recordExists = await checkDB(isbn);
+          // if (recordExists) {
+          //   console.log("Record Exists: ", recordExists);
+          //   message = `ISBN ${isbn} already exists in the database.`;
+          //   return;
+          // }
+          message = await handleIsbnLookup(isbnFound.isbn);
           isAnimating = false;
-        }, 200 * isbn.length);
+        }, 200 * isbnFound.isbn.length);
       } else {
         isAnimating = false;
       }
@@ -186,10 +192,18 @@
   // svelte-ignore non_reactive_update
   let sheet: SpreadSheet;
   $effect(() => {
-    if (message) {
+    if (message !== "Isbn Found Please Input the accession Number") {
       setTimeout(() => {
+
         message = "";
       }, 4000);
+    }
+    else {
+      isbnFound.value = true;
+      setTimeout(() => {
+        accessionInput.value = "";
+        accessionInput.focus();
+      }, 0);
     }
   });
 
@@ -219,27 +233,60 @@
   });
 </script>
 
+{#snippet inputBlock(num: number)}
+  <input
+    onkeydown={handleInput}
+    type="text"
+    class="input-{num + 1}"
+    name={num.toString()}
+    id="input-{num + 1}"
+    maxlength="1"
+    required
+    inputmode="numeric"
+  />
+{/snippet}
+
 <div class="message">{message}</div>
 
 <!-- <input type="number" name="1" id="input-1" maxlength="1" /> -->
+  {#if !isbnFound.value}
+
 <div class="isbn-input">
   <div class="isbn-type">ISBN-{isbnType}:</div>
   {#each { length: isbnType } as _, num}
-    <!-- {#if isbnType === 10 && (num === 1 || num === 4 || num === 9)}<span class="dash">-</span>
- {:else   if isbnType === 13 && (num === 3 || num === 5 || num === 8 || num === 12)}<span class="dash">-</span>
- {/if}  -->
-    <input
-      onkeydown={handleInput}
-      type="text"
-      class="input-{num + 1}"
-      name={num.toString()}
-      id="input-{num + 1}"
-      maxlength="1"
-      required
-      inputmode="numeric"
-    />
-  {/each}
+    {@render inputBlock(num)}
+    <!-- {#if num === 2 || num === 4 || num === 9}
+      <div class="dash">-</div>
+    {/if} -->
+    {/each}
+  </div>
+{:else}
+<div class="isbn-input">
+  <div class="isbn-type">Accession No:</div>
+  <input bind:this={accessionInput} type="text" name="accession" id="accession-input" maxlength="20" />
 </div>
+{/if}
+
+<button onclick={async () =>{ 
+  if (isbnFound.value) {
+    const accessionNumber = accessionInput.value.trim();
+    if (accessionNumber === "") {
+      message = "Please enter a valid accession number.";
+      return;
+    }
+    // Update the accession number in the database
+   sheet.updateSpreadsheet(isbnFound.isbn, accessionNumber);
+    message = `Accession number ${accessionNumber} added for ISBN ${isbnFound.isbn}.`;
+    isbnFound.value = false;
+              const dbIndex = db.spreadsheets.update(isbnFound.isbn as unknown as ISpreadsheetData, {
+            accession: accessionNumber,
+          });
+          console.log("dbIndex: ", dbIndex);
+    // accessionInput.value = "";
+  } else {  
+    await handleSearch();
+  }
+}} id="search">{isbnFound.value ? "Update Accession Number" : "Search For ISBN"}</button>
 
 <style>
   .isbn-input {
@@ -289,15 +336,40 @@
     outline: 1px solid red;
   }
   .message {
+    font-family: Arial, Helvetica, sans-serif;
     color: red;
-    margin-top: 1rem;
-    font-weight: bold;
+    margin-top: 2rem;
     text-align: center;
+    font-weight: bolder;
   }
   .dash {
     font-size: 3rem;
     margin: 0rem 0.3rem 0.2rem;
     /* line-height: 1; */
     color: #009879;
+  }
+
+  #search {
+    margin: 1rem auto 0;
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #009879;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+  }
+  #search:hover {
+    background-color: #007f63;
+  }
+  #accession-input {
+    width: 10ch;
+    font-size: large;
+    padding: 0.5rem 0.7rem;
+    margin: 0.5rem 0.2rem 0;
+    transition: all 0.2s ease;
   }
 </style>
