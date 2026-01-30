@@ -3,7 +3,7 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 import { f as dn, a as sn } from "./BjTfwbem.js";
 import { o as Pf } from "./B3YYK8RE.js";
-import { o as q0, c as e1, i as Y0, h as an, at as r1, d as t1, M as cr, V as a1, r as n1, H as i1, e as qo, j as Z0, n as s1, u as Cs, ah as f1, aB as o1, al as Yo, k as c1, aP as Ma, t as _f, af as Zo, aN as wf, az as Bf, aQ as u1, aR as l1, aS as h1, aT as d1, l as vu, p as mu, aU as J0, av as x1, ay as p1, m as v1, aV as gu, q as m1, aW as g1, P as _u, a5 as Lf, s as En, a8 as pa, a9 as Gt, a6 as Jn, ad as Xs, a7 as Mf, Q as nn, G as Jo, f as wu, aX as _1, aO as w1, aY as y1 } from "./CdrJcFTF.js";
+import { o as q0, c as e1, i as Y0, h as an, at as r1, d as t1, M as or, V as a1, r as n1, H as i1, e as qo, j as Z0, n as s1, u as Cs, ah as f1, aB as o1, al as Yo, k as c1, aP as Ma, t as _f, af as Zo, aN as wf, az as Bf, aQ as u1, aR as l1, aS as h1, aT as d1, l as vu, p as mu, aU as J0, av as x1, ay as p1, m as v1, aV as gu, q as m1, aW as g1, P as _u, a5 as Lf, s as En, a8 as pa, a9 as Gt, a6 as Jn, ad as Xs, a7 as Mf, Q as nn, G as Jo, f as wu, aX as _1, aO as w1, aY as y1 } from "./CdrJcFTF.js";
 import { s as Qn } from "./9O2zJLIi.js";
 import { i as k1 } from "./5RHKzVXV.js";
 import { s as Qo } from "./C8_7hY_V.js";
@@ -11,7 +11,7 @@ import { d as Uf } from "./Cuooy7pM.js";
 import { p as Ks } from "./DAqyL755.js";
 import { b as yu } from "./DdzU8gf5.js";
 import { i as E1 } from "./Pcmb8gcg.js";
-import "./wYCbF3XP.js";
+import "./DBcdFs3K.js";
 function js(e, r) {
   return r;
 }
@@ -57,7 +57,7 @@ function Gs(e, r, t, a, n, i = null) {
     }));
   }
   var y = e1(() => {
-    d = cr(v);
+    d = or(v);
     var g = d.length;
     let S = false;
     if (an) {
@@ -74,7 +74,7 @@ function Gs(e, r, t, a, n, i = null) {
       X.oncommit(_), X.ondiscard(() => {
       });
     } else _();
-    S && Z0(true), cr(v);
+    S && Z0(true), or(v);
   }), m = { effect: y, items: f, outrogroups: null, fallback: h };
   x = false, an && (s = Cs);
 }
@@ -710,7 +710,7 @@ function O1() {
         Promise === qr && nt.echoes === 0 ? b === 0 ? o() : enqueueNativeMicroTask(o) : setTimeout(o, 0);
       }
       ("" + aa).indexOf("[native code]") === -1 && (N = M = ue);
-      var Ie = Xe.reject, we = "\uFFFF", be = "Invalid key provided. Keys must be of type string, number, Date or Array<string | number | Date>.", or = "String expected.", Nr = [], Hr = "__dbnames", it = "readonly", Ra = "readwrite";
+      var Ie = Xe.reject, we = "\uFFFF", be = "Invalid key provided. Keys must be of type string, number, Date or Array<string | number | Date>.", cr = "String expected.", Nr = [], Hr = "__dbnames", it = "readonly", Ra = "readwrite";
       function $t(o, l) {
         return o ? l ? function() {
           return o.apply(this, arguments) && l.apply(this, arguments);
@@ -1444,7 +1444,7 @@ function O1() {
         var k, T, O, H, q, Y, ee, j = p.length;
         if (!p.every(function(J) {
           return typeof J == "string";
-        })) return qt(o, or);
+        })) return qt(o, cr);
         function ae(J) {
           k = J === "next" ? function(re) {
             return re.toUpperCase();
@@ -1531,7 +1531,7 @@ function O1() {
           return Ja(void 0, o);
         });
       }, pt.prototype.startsWith = function(o) {
-        return typeof o != "string" ? qt(this, or) : this.between(o, o + we, true, true);
+        return typeof o != "string" ? qt(this, cr) : this.between(o, o + we, true, true);
       }, pt.prototype.startsWithIgnoreCase = function(o) {
         return o === "" ? this.startsWith(o) : vs(this, function(l, p) {
           return l.indexOf(p[0]) === 0;
@@ -4335,14 +4335,14 @@ var xc = (function() {
     if (C === 3 && Ie !== 0) throw new Error("# Directory Sectors: Expected 0 saw " + Ie);
     ie.l += 4, fe = ie.read_shift(4, "i"), ie.l += 4, ie.chk("00100000", "Mini Stream Cutoff Size: "), xe = ie.read_shift(4, "i"), N = ie.read_shift(4, "i"), ne = ie.read_shift(4, "i"), M = ie.read_shift(4, "i");
     for (var we = -1, be = 0; be < 109 && (we = ie.read_shift(4, "i"), !(we < 0)); ++be) ce[be] = we;
-    var or = x(b, I);
-    m(ne, M, or, I, ce);
-    var Nr = S(or, fe, ce, I);
+    var cr = x(b, I);
+    m(ne, M, cr, I, ce);
+    var Nr = S(cr, fe, ce, I);
     fe < Nr.length && (Nr[fe].name = "!Directory"), N > 0 && xe !== de && (Nr[xe].name = "!MiniFAT"), Nr[ce[0]].name = "!FAT", Nr.fat_addrs = ce, Nr.ssz = I;
     var Hr = {}, it = [], Ra = [], $t = [];
-    E(fe, Nr, or, it, N, Hr, Ra, xe), _(Ra, $t, it), it.shift();
+    E(fe, Nr, cr, it, N, Hr, Ra, xe), _(Ra, $t, it), it.shift();
     var Za = { FileIndex: Ra, FullPaths: $t };
-    return P && P.raw && (Za.raw = { header: Ne, sectors: or }), Za;
+    return P && P.raw && (Za.raw = { header: Ne, sectors: cr }), Za;
   }
   function v(b) {
     if (b[b.l] == 80 && b[b.l + 1] == 75) return [0, 0];
@@ -4427,8 +4427,8 @@ var xc = (function() {
     for (var ne = 0, ce = I.length ? 2 : 0, ie = P[b].data, Ee = 0, Ne = 0, Ie; Ee < ie.length; Ee += 128) {
       var we = ie.slice(Ee, Ee + 128);
       ct(we, 64), Ne = we.read_shift(2), Ie = Jf(we, 0, Ne - ce), I.push(Ie);
-      var be = { name: Ie, type: we.read_shift(1), color: we.read_shift(1), L: we.read_shift(4, "i"), R: we.read_shift(4, "i"), C: we.read_shift(4, "i"), clsid: we.read_shift(16), state: we.read_shift(4, "i"), start: 0, size: 0 }, or = we.read_shift(2) + we.read_shift(2) + we.read_shift(2) + we.read_shift(2);
-      or !== 0 && (be.ct = A(we, we.l - 8));
+      var be = { name: Ie, type: we.read_shift(1), color: we.read_shift(1), L: we.read_shift(4, "i"), R: we.read_shift(4, "i"), C: we.read_shift(4, "i"), clsid: we.read_shift(16), state: we.read_shift(4, "i"), start: 0, size: 0 }, cr = we.read_shift(2) + we.read_shift(2) + we.read_shift(2) + we.read_shift(2);
+      cr !== 0 && (be.ct = A(we, we.l - 8));
       var Nr = we.read_shift(2) + we.read_shift(2) + we.read_shift(2) + we.read_shift(2);
       Nr !== 0 && (be.mt = A(we, we.l - 8)), be.start = we.read_shift(4, "i"), be.size = we.read_shift(4, "i"), be.size < 0 && be.start < 0 && (be.size = be.type = 0, be.start = de, be.name = ""), be.type === 5 ? (ne = be.start, N > 0 && ne !== de && (P[ne].name = "!StreamData")) : be.size >= 4096 ? (be.storage = "fat", P[be.start] === void 0 && (P[be.start] = g(C, be.start, P.fat_addrs, P.ssz)), P[be.start].name = be.name, be.content = P[be.start].data.slice(0, be.size)) : (be.storage = "minifat", be.size < 0 ? be.size = 0 : ne !== de && be.start !== de && P[ne] && (be.content = y(be, P[ne].data, (P[xe] || {}).data))), be.content && ct(be.content, 0), M[Ie] = be, fe.push(be);
     }
@@ -4510,8 +4510,8 @@ var xc = (function() {
     if (C.fileType == "mad") return xi(b, C);
     if (L(b), C.fileType === "zip") return ls(b, C);
     var I = (function(Ie) {
-      for (var we = 0, be = 0, or = 0; or < Ie.FileIndex.length; ++or) {
-        var Nr = Ie.FileIndex[or];
+      for (var we = 0, be = 0, cr = 0; cr < Ie.FileIndex.length; ++cr) {
+        var Nr = Ie.FileIndex[cr];
         if (Nr.content) {
           var Hr = Nr.content.length;
           Hr > 0 && (Hr < 4096 ? we += Hr + 63 >> 6 : be += Hr + 511 >> 9);
@@ -4750,16 +4750,16 @@ var xc = (function() {
         for (var Ie = 0; Ne-- > 0; ) {
           var we = xe[ie];
           Ie = (Ie << 5 ^ we) & 32767;
-          var be = -1, or = 0;
-          if ((be = Ee[Ie]) && (be |= ie & -32768, be > ie && (be -= 32768), be < ie)) for (; xe[be + or] == xe[ie + or] && or < 250; ) ++or;
-          if (or > 2) {
-            we = N[or], we <= 22 ? ce = Er(ne, ce, z[we + 1] >> 1) - 1 : (Er(ne, ce, 3), ce += 5, Er(ne, ce, z[we - 23] >> 5), ce += 3);
+          var be = -1, cr = 0;
+          if ((be = Ee[Ie]) && (be |= ie & -32768, be > ie && (be -= 32768), be < ie)) for (; xe[be + cr] == xe[ie + cr] && cr < 250; ) ++cr;
+          if (cr > 2) {
+            we = N[cr], we <= 22 ? ce = Er(ne, ce, z[we + 1] >> 1) - 1 : (Er(ne, ce, 3), ce += 5, Er(ne, ce, z[we - 23] >> 5), ce += 3);
             var Nr = we < 8 ? 0 : we - 4 >> 2;
-            Nr > 0 && (Kr(ne, ce, or - Ge[we]), ce += Nr), we = P[ie - be], ce = Er(ne, ce, z[we] >> 3), ce -= 3;
+            Nr > 0 && (Kr(ne, ce, cr - Ge[we]), ce += Nr), we = P[ie - be], ce = Er(ne, ce, z[we] >> 3), ce -= 3;
             var Hr = we < 4 ? 0 : we - 2 >> 1;
             Hr > 0 && (Kr(ne, ce, ie - be - Ze[we]), ce += Hr);
-            for (var it = 0; it < or; ++it) Ee[Ie] = ie & 32767, Ie = (Ie << 5 ^ xe[ie]) & 32767, ++ie;
-            Ne -= or - 1;
+            for (var it = 0; it < cr; ++it) Ee[Ie] = ie & 32767, Ie = (Ie << 5 ^ xe[ie]) & 32767, ++ie;
+            Ne -= cr - 1;
           } else we <= 143 ? we = we + 48 : ce = Ir(ne, ce, 1), ce = Er(ne, ce, z[we]), Ee[Ie] = ie & 32767, ++ie;
         }
         ce = Er(ne, ce, 0) - 1;
@@ -4791,22 +4791,22 @@ var xc = (function() {
       Ie = z[xe[Ne]] >> 8 - we;
       for (var be = (1 << 7 - we) - 1; be >= 0; --be) jr[Ie | be << we] = we & 7 | Ne << 3;
     }
-    var or = [];
-    for (ne = 1; or.length < C + I; ) switch (Ie = jr[ar(b, P)], P += Ie & 7, Ie >>>= 3) {
+    var cr = [];
+    for (ne = 1; cr.length < C + I; ) switch (Ie = jr[ar(b, P)], P += Ie & 7, Ie >>>= 3) {
       case 16:
-        for (M = 3 + D(b, P), P += 2, Ie = or[or.length - 1]; M-- > 0; ) or.push(Ie);
+        for (M = 3 + D(b, P), P += 2, Ie = cr[cr.length - 1]; M-- > 0; ) cr.push(Ie);
         break;
       case 17:
-        for (M = 3 + Ce(b, P), P += 3; M-- > 0; ) or.push(0);
+        for (M = 3 + Ce(b, P), P += 3; M-- > 0; ) cr.push(0);
         break;
       case 18:
-        for (M = 11 + ar(b, P), P += 7; M-- > 0; ) or.push(0);
+        for (M = 11 + ar(b, P), P += 7; M-- > 0; ) cr.push(0);
         break;
       default:
-        or.push(Ie), ne < Ie && (ne = Ie);
+        cr.push(Ie), ne < Ie && (ne = Ie);
         break;
     }
-    var Nr = or.slice(0, C), Hr = or.slice(C);
+    var Nr = cr.slice(0, C), Hr = cr.slice(C);
     for (Ne = C; Ne < 286; ++Ne) Nr[Ne] = 0;
     for (Ne = I; Ne < 30; ++Ne) Hr[Ne] = 0;
     return zr = Oe(Nr, Ke, 286), xt = Oe(Hr, kr, 30), P;
@@ -4863,8 +4863,8 @@ var xc = (function() {
       C.l += 8;
       var we = C.read_shift(4), be = f(C.slice(C.l + Ee, C.l + Ee + Ne));
       C.l += Ee + Ne + Ie;
-      var or = C.l;
-      C.l = we + 4, be && be[1] && ((be[1] || {}).usz && (ie = be[1].usz), (be[1] || {}).csz && (ce = be[1].csz)), hi(C, ce, ie, M, be), C.l = or;
+      var cr = C.l;
+      C.l = we + 4, be && be[1] && ((be[1] || {}).usz && (ie = be[1].usz), (be[1] || {}).csz && (ce = be[1].csz)), hi(C, ce, ie, M, be), C.l = cr;
     }
     return M;
   }
@@ -4878,10 +4878,10 @@ var xc = (function() {
       (be[21589] || {}).mt && (xe = be[21589].mt), (be[1] || {}).usz && (ie = be[1].usz), (be[1] || {}).csz && (ce = be[1].csz), N && ((N[21589] || {}).mt && (xe = N[21589].mt), (N[1] || {}).usz && (ie = N[1].usz), (N[1] || {}).csz && (ce = N[1].csz));
     }
     b.l += Ne;
-    var or = b.slice(b.l, b.l + ce);
+    var cr = b.slice(b.l, b.l + ce);
     switch (fe) {
       case 8:
-        or = Te(b, ie);
+        cr = Te(b, ie);
         break;
       case 0:
         b.l += ce;
@@ -4890,18 +4890,18 @@ var xc = (function() {
         throw new Error("Unsupported ZIP Compression method " + fe);
     }
     var Nr = false;
-    M & 8 && (ne = b.read_shift(4), ne == 134695760 && (ne = b.read_shift(4), Nr = true), ce = b.read_shift(4), ie = b.read_shift(4)), ce != P && vn(Nr, "Bad compressed size: " + P + " != " + ce), ie != C && vn(Nr, "Bad uncompressed size: " + C + " != " + ie), Wr(I, Ie, or, { unsafe: true, mt: xe });
+    M & 8 && (ne = b.read_shift(4), ne == 134695760 && (ne = b.read_shift(4), Nr = true), ce = b.read_shift(4), ie = b.read_shift(4)), ce != P && vn(Nr, "Bad compressed size: " + P + " != " + ce), ie != C && vn(Nr, "Bad uncompressed size: " + C + " != " + ie), Wr(I, Ie, cr, { unsafe: true, mt: xe });
   }
   function ls(b, P) {
-    var C = P || {}, I = [], N = [], M = oe(1), fe = C.compression ? 8 : 0, xe = 0, ne = 0, ce = 0, ie = 0, Ee = 0, Ne = b.FullPaths[0], Ie = Ne, we = b.FileIndex[0], be = [], or = 0;
+    var C = P || {}, I = [], N = [], M = oe(1), fe = C.compression ? 8 : 0, xe = 0, ne = 0, ce = 0, ie = 0, Ee = 0, Ne = b.FullPaths[0], Ie = Ne, we = b.FileIndex[0], be = [], cr = 0;
     for (ne = 1; ne < b.FullPaths.length; ++ne) if (Ie = b.FullPaths[ne].slice(Ne.length), we = b.FileIndex[ne], !(!we.size || !we.content || Array.isArray(we.content) && we.content.length == 0 || Ie == "Sh33tJ5")) {
       var Nr = ie, Hr = oe(Ie.length);
       for (ce = 0; ce < Ie.length; ++ce) Hr.write_shift(1, Ie.charCodeAt(ce) & 127);
       Hr = Hr.slice(0, Hr.l), be[Ee] = typeof we.content == "string" ? xc.bstr(we.content, 0) : xc.buf(we.content, 0);
       var it = typeof we.content == "string" ? Vt(we.content) : we.content;
-      fe == 8 && (it = ye(it)), M = oe(30), M.write_shift(4, 67324752), M.write_shift(2, 20), M.write_shift(2, xe), M.write_shift(2, fe), we.mt ? i(M, we.mt) : M.write_shift(4, 0), M.write_shift(-4, be[Ee]), M.write_shift(4, it.length), M.write_shift(4, we.content.length), M.write_shift(2, Hr.length), M.write_shift(2, 0), ie += M.length, I.push(M), ie += Hr.length, I.push(Hr), ie += it.length, I.push(it), M = oe(46), M.write_shift(4, 33639248), M.write_shift(2, 0), M.write_shift(2, 20), M.write_shift(2, xe), M.write_shift(2, fe), M.write_shift(4, 0), M.write_shift(-4, be[Ee]), M.write_shift(4, it.length), M.write_shift(4, we.content.length), M.write_shift(2, Hr.length), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(4, 0), M.write_shift(4, Nr), or += M.l, N.push(M), or += Hr.length, N.push(Hr), ++Ee;
+      fe == 8 && (it = ye(it)), M = oe(30), M.write_shift(4, 67324752), M.write_shift(2, 20), M.write_shift(2, xe), M.write_shift(2, fe), we.mt ? i(M, we.mt) : M.write_shift(4, 0), M.write_shift(-4, be[Ee]), M.write_shift(4, it.length), M.write_shift(4, we.content.length), M.write_shift(2, Hr.length), M.write_shift(2, 0), ie += M.length, I.push(M), ie += Hr.length, I.push(Hr), ie += it.length, I.push(it), M = oe(46), M.write_shift(4, 33639248), M.write_shift(2, 0), M.write_shift(2, 20), M.write_shift(2, xe), M.write_shift(2, fe), M.write_shift(4, 0), M.write_shift(-4, be[Ee]), M.write_shift(4, it.length), M.write_shift(4, we.content.length), M.write_shift(2, Hr.length), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(4, 0), M.write_shift(4, Nr), cr += M.l, N.push(M), cr += Hr.length, N.push(Hr), ++Ee;
     }
-    return M = oe(22), M.write_shift(4, 101010256), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, Ee), M.write_shift(2, Ee), M.write_shift(4, or), M.write_shift(4, ie), M.write_shift(2, 0), rt([rt(I), rt(N), M]);
+    return M = oe(22), M.write_shift(4, 101010256), M.write_shift(2, 0), M.write_shift(2, 0), M.write_shift(2, Ee), M.write_shift(2, Ee), M.write_shift(4, cr), M.write_shift(4, ie), M.write_shift(2, 0), rt([rt(I), rt(N), M]);
   }
   var $a = { htm: "text/html", xml: "text/xml", gif: "image/gif", jpg: "image/jpeg", png: "image/png", mso: "application/x-mso", thmx: "application/vnd.ms-officetheme", sh33tj5: "application/octet-stream" };
   function hs(b, P) {
@@ -4999,10 +4999,10 @@ var xc = (function() {
     var C = P || {}, I = C.boundary || "SheetJS";
     I = "------=" + I;
     for (var N = ["MIME-Version: 1.0", 'Content-Type: multipart/related; boundary="' + I.slice(2) + '"', "", "", ""], M = b.FullPaths[0], fe = M, xe = b.FileIndex[0], ne = 1; ne < b.FullPaths.length; ++ne) if (fe = b.FullPaths[ne].slice(M.length), xe = b.FileIndex[ne], !(!xe.size || !xe.content || fe == "Sh33tJ5")) {
-      fe = fe.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7E-\xFF]/g, function(or) {
-        return "_x" + or.charCodeAt(0).toString(16) + "_";
-      }).replace(/[\u0080-\uFFFF]/g, function(or) {
-        return "_u" + or.charCodeAt(0).toString(16) + "_";
+      fe = fe.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7E-\xFF]/g, function(cr) {
+        return "_x" + cr.charCodeAt(0).toString(16) + "_";
+      }).replace(/[\u0080-\uFFFF]/g, function(cr) {
+        return "_u" + cr.charCodeAt(0).toString(16) + "_";
       });
       for (var ce = xe.content, ie = mr && Buffer.isBuffer(ce) ? ce.toString("binary") : Qe(ce), Ee = 0, Ne = Math.min(1024, ie.length), Ie = 0, we = 0; we <= Ne; ++we) (Ie = ie.charCodeAt(we)) >= 32 && Ie < 128 && ++Ee;
       var be = Ee >= Ne * 4 / 5;
@@ -18410,7 +18410,7 @@ async function $s(e, r = false) {
 async function Nh(e) {
   return await Aa.spreadsheets.get({ isbn: e });
 }
-var _E = dn('<div class="isbn-input"><div class="isbn-type">Accession No:</div> <span id="accessionType"> </span> <input type="text" name="accession" id="accession-input" class="svelte-1a3p2ai"/></div>');
+var _E = dn('<div class="isbn-input"><div class="isbn-type">Accession No:</div> <span class="isbn-type" id="accessionType"> </span> <input type="text" name="accession" id="accession-input" class="svelte-1a3p2ai"/></div>');
 function wE(e, r) {
   Lf(r, true);
   let t = Ks(r, "accessionInput", 15), a = Ks(r, "isbnFound", 15), n = Ks(r, "message", 15), i = Xs("OLD");
@@ -18426,7 +18426,7 @@ function wE(e, r) {
     const d = v.target;
     switch (v.key) {
       case "Tab":
-        v.preventDefault(), nn(i, cr(i) === "OLD" ? "ILS" : "OLD", true);
+        v.preventDefault(), nn(i, or(i) === "OLD" ? "ILS" : "OLD", true), or(i) === "ILS" ? d.value.endsWith(",ILS-SR-") || (d.value += ",ILS-SR-") : d.value.endsWith(",ILS-SR-") && (d.value = d.value.replace(",ILS-SR-", ""));
         break;
       case " ":
         v.preventDefault(), d.value += "()";
@@ -18442,7 +18442,7 @@ function wE(e, r) {
   var f = _E(), c = En(pa(f), 2), u = pa(c, true);
   Gt(c);
   var h = En(c, 2);
-  h.__keydown = s, yu(h, (v) => t(v), () => t()), Gt(f), Jn(() => Qn(u, cr(i) === "OLD" ? "" : "ILS-SR-")), sn(e, f), Mf();
+  h.__keydown = s, yu(h, (v) => t(v), () => t()), Gt(f), Jn(() => Qn(u, or(i) === "OLD" ? "" : "ILS-SR-")), sn(e, f), Mf();
 }
 Uf(["keydown"]);
 var yE = dn('<input type="text" maxlength="1" required inputmode="numeric"/>'), kE = dn('<div class="isbn-input svelte-f3psja"><div class="isbn-type svelte-f3psja"> </div> <!></div>'), EE = dn('<div class="message svelte-f3psja"> </div> <!> <button id="search" class="svelte-f3psja"> </button>', 1);
@@ -18457,7 +18457,7 @@ function YE(e, r) {
   let a = Ks(r, "message", 15), n = Xs(_u({ value: false, isbn: "" })), i = Xs(13), s = Xs(false), f;
   async function c() {
     const U = document.querySelectorAll('input[maxlength="1"]');
-    cr(n).isbn = pu(U), a(await $s(cr(n)));
+    or(n).isbn = pu(U), a(await $s(or(n)));
   }
   async function u(U) {
     const F = document.querySelectorAll('input[maxlength="1"]'), B = parseInt(U.key), L = U.target, K = U.key === "Backspace", G = L.nextElementSibling, te = L.previousElementSibling;
@@ -18487,21 +18487,21 @@ function YE(e, r) {
         break;
       case "Enter":
         if (U.preventDefault(), !mE(F)) return;
-        cr(n).isbn = pu(F), gE(F), h(), await Nh(cr(n).isbn), a(await $s(cr(n)));
+        or(n).isbn = pu(F), gE(F), h(), await Nh(or(n).isbn), a(await $s(or(n)));
         break;
     }
   }
   function h() {
-    if (!cr(n).value) {
+    if (!or(n).value) {
       const U = document.querySelectorAll("input[maxlength='1']");
-      if (cr(i) === 13) {
+      if (or(i) === 13) {
         const F = [9, 7, 8];
         for (let B = 0; B < 3; B++) U.item(B).value = F[B].toString();
         setTimeout(() => {
           U.item(3).focus();
         }, 0);
       }
-      if (cr(i) === 10) {
+      if (or(i) === 10) {
         for (let F = 0; F < 10; F++) U.item(F).value = "";
         setTimeout(() => {
           U.item(0).focus();
@@ -18510,23 +18510,23 @@ function YE(e, r) {
     }
   }
   function v(U) {
-    U.preventDefault(), nn(i, cr(i) === 13 ? 10 : 13, true);
+    U.preventDefault(), nn(i, or(i) === 13 ? 10 : 13, true);
   }
   Jo(() => {
-    cr(i) && h();
+    or(i) && h();
   });
   async function d(U, F) {
     var _a2;
     U.preventDefault();
     const B = ((_a2 = U.clipboardData) == null ? void 0 : _a2.getData("text")) || "";
-    if (console.log("pasted Text Raw: ", B), cr(n).isbn = B.replace(/\D/g, "").slice(0, 13), cr(n).isbn.length > 0) {
+    if (console.log("pasted Text Raw: ", B), or(n).isbn = B.replace(/\D/g, "").slice(0, 13), or(n).isbn.length > 0) {
       nn(s, true);
-      for (let L = 0; L < cr(n).isbn.length && L < F.length; L++) F[L].value = cr(n).isbn[L], F[L].classList.add("paste-fill"), setTimeout(() => {
+      for (let L = 0; L < or(n).isbn.length && L < F.length; L++) F[L].value = or(n).isbn[L], F[L].classList.add("paste-fill"), setTimeout(() => {
         F[L].classList.remove("paste-fill");
       }, 100 * (L + 1));
-      cr(n).isbn.length === 13 || cr(n).isbn.length === 10 || cr(n).isbn.length === 9 ? setTimeout(async () => {
-        a(await $s(cr(n))), nn(s, false);
-      }, 200 * cr(n).isbn.length) : nn(s, false);
+      or(n).isbn.length === 13 || or(n).isbn.length === 10 || or(n).isbn.length === 9 ? setTimeout(async () => {
+        a(await $s(or(n))), nn(s, false);
+      }, 200 * or(n).isbn.length) : nn(s, false);
     }
   }
   let x;
@@ -18536,7 +18536,7 @@ function YE(e, r) {
       h(), setTimeout(() => {
         a("");
       }, 4e3);
-    } else cr(n).value = true, setTimeout(() => {
+    } else or(n).value = true, setTimeout(() => {
       f.value = "", f.focus();
     }, 0);
   }), Pf(() => {
@@ -18557,16 +18557,16 @@ function YE(e, r) {
       var F = kE(), B = pa(F), L = pa(B);
       Gt(B);
       var K = En(B, 2);
-      Gs(K, 17, () => ({ length: cr(i) }), js, (G, te, de) => {
+      Gs(K, 17, () => ({ length: or(i) }), js, (G, te, de) => {
         t(G, () => de);
-      }), Gt(F), Jn(() => Qn(L, `ISBN-${cr(i) ?? ""}:`)), sn(U, F);
+      }), Gt(F), Jn(() => Qn(L, `ISBN-${or(i) ?? ""}:`)), sn(U, F);
     }, E = (U) => {
       wE(U, { get message() {
         return a();
       }, set message(F) {
         a(F);
       }, get isbnFound() {
-        return cr(n);
+        return or(n);
       }, set isbnFound(F) {
         nn(n, F, true);
       }, get accessionInput() {
@@ -18576,19 +18576,19 @@ function YE(e, r) {
       } });
     };
     k1(g, (U) => {
-      cr(n).value ? U(E, false) : U(S);
+      or(n).value ? U(E, false) : U(S);
     });
   }
   var A = En(g, 2);
   A.__click = async () => {
-    if (cr(n).value) {
+    if (or(n).value) {
       const U = f.value.trim();
-      a(x.updateSpreadsheet(cr(n).isbn, U)), cr(n).value = false;
+      a(x.updateSpreadsheet(or(n).isbn, U)), or(n).value = false;
     } else await c();
   };
   var X = pa(A, true);
   Gt(A), Jn(() => {
-    Qn(m, a()), Qn(X, cr(n).value ? "Update Accession Number" : "Search For ISBN");
+    Qn(m, a()), Qn(X, or(n).value ? "Update Accession Number" : "Search For ISBN");
   }), sn(e, _), Mf();
 }
 Uf(["keydown", "click"]);
@@ -18597,7 +18597,7 @@ function ZE(e, r) {
   Lf(r, false);
   let t = wf(), a = wf();
   Pf(async () => {
-    nn(t, Ht.getInstance()), await cr(t).loadFromDatabase(), cr(t).renderSpreadsheet(), cr(a).addEventListener("dblclick", (d) => {
+    nn(t, Ht.getInstance()), await or(t).loadFromDatabase(), or(t).renderSpreadsheet(), or(a).addEventListener("dblclick", (d) => {
       var _a2;
       const x = d.target, _ = x.closest("tr"), y = _.childNodes[2].textContent, m = _.childNodes[0], g = m.cloneNode(true);
       (_a2 = m.parentNode) == null ? void 0 : _a2.replaceChild(g, m);
@@ -18611,32 +18611,32 @@ function ZE(e, r) {
         A == null ? void 0 : A.removeAllRanges(), A == null ? void 0 : A.addRange(E);
       }
       S.addEventListener("blur", () => {
-        S.contentEditable = "false", S.textContent == "\u200B" && (S.textContent = "N/A"), cr(t).updateSpreadsheet(y), cr(t).renderSpreadsheet();
+        S.contentEditable = "false", S.textContent == "\u200B" && (S.textContent = "N/A"), or(t).updateSpreadsheet(y), or(t).renderSpreadsheet();
         const E = Aa.spreadsheets.update(y, { accession: S.textContent });
         console.log("dbIndex: ", E);
-      }, { once: true }), cr(t).renderSpreadsheet(), console.log("Real Target: ", x), console.log("Row chosen: ", x.closest("tr")), console.log(y);
+      }, { once: true }), or(t).renderSpreadsheet(), console.log("Real Target: ", x), console.log("Row chosen: ", x.closest("tr")), console.log(y);
     });
     const v = setTimeout(() => {
-      cr(t).scrollToView(), clearTimeout(v);
+      or(t).scrollToView(), clearTimeout(v);
     }, 500);
   }), E1();
   var n = FE(), i = wu(n), s = pa(i), f = pa(s), c = pa(f);
   Gs(c, 5, () => Oh, js, (v, d) => {
     var x = TE(), _ = pa(x, true);
-    Gt(x), Jn(() => Qn(_, cr(d))), sn(v, x);
+    Gt(x), Jn(() => Qn(_, or(d))), sn(v, x);
   }), Gt(c), Gt(f);
   var u = En(f);
   Gs(u, 5, () => Dh.data, js, (v, d) => {
     var x = bE();
-    Gs(x, 5, () => Object.entries(cr(d)), js, (_, y) => {
-      var m = w1(() => y1(cr(y), 2));
-      let g = () => cr(m)[1];
+    Gs(x, 5, () => Object.entries(or(d)), js, (_, y) => {
+      var m = w1(() => y1(or(y), 2));
+      let g = () => or(m)[1];
       var S = SE(), E = pa(S, true);
       Gt(S), Jn(() => Qn(E, g())), sn(_, S);
     }), Gt(x), sn(v, x);
-  }), Gt(u), yu(u, (v) => nn(a, v), () => cr(a)), Gt(s), Gt(i);
+  }), Gt(u), yu(u, (v) => nn(a, v), () => or(a)), Gt(s), Gt(i);
   var h = En(i, 2);
-  h.__click = () => cr(t).DownloadSpreadSheet.call(cr(t)), sn(e, n), Mf();
+  h.__click = () => or(t).DownloadSpreadSheet.call(or(t)), sn(e, n), Mf();
 }
 Uf(["click"]);
 export {
