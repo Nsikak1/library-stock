@@ -101,7 +101,8 @@
 
 <style>
   .isbn-details {
-    height: 40vh;
+    /* height: auto; */
+    max-height: 65vh;
     overflow-y: auto;
     position: relative;
   }

@@ -11,8 +11,16 @@
   const room = new Room();
   let chat: HTMLPreElement;
   let input: HTMLInputElement;
+  let connected = $state(false);
+
+  
 
 
+  $effect(() => {
+    if (connected) {
+      window.location.assign("/spreadsheet")
+    }
+  })
 
 
   async function join() {
@@ -75,9 +83,9 @@
 
 {#if TransferState}
   {#if TransferState === "receive"}
-    <QrCode />
+    <QrCode  bind:connected />
   {:else}
-    <ScanQrCode />
+    <ScanQrCode  />
   {/if}
 
   {:else}

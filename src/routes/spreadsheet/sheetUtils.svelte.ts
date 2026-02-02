@@ -3,7 +3,7 @@ import { resolve } from "$app/paths";
 import { db, type ISpreadsheetData, spreadsheetKeys } from "../db";
 
 export const spreadsheetState = $state({
-    data: [] as {}[]
+  data: [] as {}[],
 });
 
 interface President {
@@ -195,10 +195,12 @@ export default class SpreadSheet {
 
   public updateSpreadsheet(isbn: string, accession: string = "N/A") {
     if (!this.workbook) {
-      console.error("Workbook is not loaded yet.");
-      return;
+      console.error( "Workbook is not loaded yet.");
+      return "Workbook is not loaded yet.";
     }
-
+        if (accession === "") {
+      return "Please enter a valid accession number.";
+    }
     console.log("jsonSpreadsheet", this.m_jsonSpreadsheet);
 
     const rowIndex = this.findRowIndexByIsbn(isbn);
@@ -209,7 +211,6 @@ export default class SpreadSheet {
     console.log("isbn found has rowIndex: ", rowIndex);
 
     const excelRowIndex = rowIndex + 1;
-    // const spreadsheetRow = util
 
     utils.sheet_add_aoa(this.worksheet, [[accession]], {
       origin: { r: excelRowIndex, c: 0 },
@@ -220,36 +221,65 @@ export default class SpreadSheet {
     }) as {}[];
 
     this.m_jsonSpreadsheet = sheet;
+       const dbIndex = db.spreadsheets.update(isbn as unknown as ISpreadsheetData, {
+            accession: accession,
+          });
     this.renderSpreadsheet();
     this.scrollToView(rowIndex);
+    return `Accession number ${accession} added for ISBN ${isbn}.`;
 
   }
 
   public renderSpreadsheet() {
-    spreadsheetState.data =[...this.m_jsonSpreadsheet];
+    spreadsheetState.data = [...this.m_jsonSpreadsheet];
   }
 
-  private findRowIndexByIsbn(isbn: string): number {
-   const rowIndex = this.m_jsonSpreadsheet.findIndex(
+  public findRowIndexByIsbn(isbn: string): number {
+    const rowIndex = this.m_jsonSpreadsheet.findIndex(
       (row: any) => row["isbn"] === isbn,
     );
     if (rowIndex === -1) {
       console.error("Row with the given ISBN not found.");
     }
     return rowIndex;
+  }
+  public getRowElementByIndex(index: number) {
+     const tbody = document.querySelector("tbody");
 
+    const trEle = tbody?.children;
+    const ele = trEle?.item(index) as HTMLTableRowElement;
+    return ele;
   }
   public scrollToView(index: number = -1) {
-      // Use setTimeout to ensure DOM has updated
-      const tbody = document.querySelector('tbody')
-      const trEle = tbody?.childNodes;
-      const ele = trEle?.item(index) as HTMLTableRowElement;
-      if (index === -1) {
-        tbody?.lastElementChild?.scrollIntoView({ behavior: "smooth", block: "end" });
+    // Use setTimeout to ensure DOM has updated
+    const tbody = document.querySelector("tbody");
+
+    const trEle = tbody?.children;
+    const ele = trEle?.item(index) as HTMLTableRowElement;
+    const color = ele?.style?.backgroundColor;
+
+    if (index === -1) {
+      tbody?.lastElementChild?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+    const t = setTimeout(() => {
+      ele?.scrollIntoView({ behavior: "smooth", block: "end" });
+      if (ele) {
+        console.log("color: ", color);
+
+        ele.style.backgroundColor = "green";
       }
-      setTimeout(() => {
-        ele?.scrollIntoView({ behavior: "smooth", block: "end" });
-      }, 0);
+      clearTimeout(t);
+    }, 0);
+    const id = setTimeout(() => {
+      if (ele) {
+        ele.style.backgroundColor = color;
+        console.log("also ran");
+      }
+      clearTimeout(id);
+    }, 1000);
   }
 
   // Download the updated spreadsheet

@@ -5,7 +5,7 @@ let the computer join the room
 
 make the first page of the phone to scan QrCode as a client == Done
 
-Move the Spreadsheet to its own route == HalfDone
+Move the Spreadsheet to its own route == Done
 
 Make the computer receive the  isbn and call the corresponding function
 

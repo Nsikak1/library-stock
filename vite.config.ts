@@ -5,11 +5,11 @@ import { readFileSync } from "fs";
 import BasicSSl from "@vitejs/plugin-basic-ssl";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
+import fs from "fs";
 
 export default defineConfig({
   assetsInclude: ["**/*.numbers", "**/*.xls", "**/*.xlsx"],
   plugins: [
-    BasicSSl(),
     wasm(),
     topLevelAwait(), // Required for compatibility with older browsers
 
@@ -26,6 +26,10 @@ export default defineConfig({
   ],
 
   server: {
+    https: {
+      key: fs.readFileSync("./localhost+1-key.pem"),
+      cert: fs.readFileSync("./localhost+1.pem"),
+    },
     host: true,
     port: 5173,
     headers: {

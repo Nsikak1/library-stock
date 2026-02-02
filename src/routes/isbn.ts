@@ -1,6 +1,7 @@
 import { db } from "./db";
 import SpreadSheet from "./spreadsheet/sheetUtils.svelte";
 
+
 // Function to fetch ISBN details from Google Books API
 export async function googleBooksLookup(isbn: string) {
   const res = await fetch(
@@ -124,17 +125,26 @@ export function clearCell(ele: NodeListOf<HTMLInputElement>) {
 }
 
 export async function handleIsbnLookup(
-  isbn: string,
+  isbnFound: {
+    value?: boolean,
+    isbn: string,
+  },
   altSource: boolean = false,
 ) {
   let isbnDetails;
   let m_altSource = altSource;
   let altDetails;
   let message = "";
+  let isbn = isbnFound.isbn;
   console.log("isbn: ", isbn);
   const dbResult = await checkDB(isbn);
   if (dbResult) {
     console.log("used DB: ", dbResult);
+      const sheet = SpreadSheet.getInstance();
+
+    const row = sheet.findRowIndexByIsbn(dbResult.isbn);
+    sheet.scrollToView(row);
+    isbnFound.value = true;
     return `You have done that isbn already the Book Name is: ${dbResult.book_name}`;
   }
 
@@ -148,7 +158,8 @@ export async function handleIsbnLookup(
     }
     if (altDetails) {
       // Retry with alternative source
-      return await handleIsbnLookup(altDetails, true);
+      isbnFound.isbn = altDetails
+      return await handleIsbnLookup(isbnFound, true);
     } else {
       m_altSource = true;
       message = "No details found for the given ISBN from both sources.";
@@ -156,6 +167,7 @@ export async function handleIsbnLookup(
     }
   } else {
     message = "Isbn Found Please Input the accession Number";
+    isbnFound.value = true;
   }
 
   const result = [
@@ -173,7 +185,8 @@ export async function handleIsbnLookup(
           .toUpperCase()
       : "English",
   ];
-  const sheet = SpreadSheet.getInstance();
+    const sheet = SpreadSheet.getInstance();
+
   const f = sheet.insertSpreadsheet(result)!;
   sheet.renderSpreadsheet();
   const timeOut = setTimeout(() => {
@@ -186,4 +199,32 @@ export async function handleIsbnLookup(
 
 export async function checkDB(isbn: string) {
   return await db.spreadsheets.get({ isbn: isbn });
+}
+
+function throttle(thresholdMs: number) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+    let lastCallTime = 0;
+
+    descriptor.value = function (...args: any[]) {
+      const now = Date.now();
+      const timeSinceLastCall = now - lastCallTime;
+
+      if (timeSinceLastCall < thresholdMs) {
+        console.log(
+          `Function called too soon. Wait ${thresholdMs - timeSinceLastCall}ms`
+        );
+        return;
+      }
+
+      lastCallTime = now;
+      return originalMethod.apply(this, args);
+    };
+
+    return descriptor;
+  };
 }

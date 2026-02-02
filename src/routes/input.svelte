@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import {
     clearCell,
     handleIsbnLookup,
@@ -8,11 +8,13 @@
     retrieveIsbnNumber,
     checkDB,
   } from "./isbn";
+  import AccessionInput from "./accession.svelte";
   import SpreadSheet from "./spreadsheet/sheetUtils.svelte.ts";
   import { db, type ISpreadsheetData } from "./db.ts";
   // let { jsonSpreadsheet = $bindable() } = $props();
-  let { message = $bindable() } = $props();
+  let { message = $bindable(), receivedIsbn = $bindable() } = $props();
 
+  let eleArr: HTMLInputElement[];
   let isbnFound = $state({
     value: false,
     isbn: "",
@@ -22,14 +24,16 @@
   // let isbnDetails: any = $state();
   let isAnimating: boolean = $state(false);
   // svelte-ignore non_reactive_update
-    let accessionInput: HTMLInputElement;
+  let accessionInput: HTMLInputElement;
+  let currentIsbn: string = "";
+
 
   async function handleSearch() {
     const eleList = document.querySelectorAll(
       'input[maxlength="1"]',
     ) as NodeListOf<HTMLInputElement>;
-    isbnFound.isbn  = retrieveIsbnNumber(eleList);
-    message = await handleIsbnLookup(isbnFound.isbn);
+    isbnFound.isbn = retrieveIsbnNumber(eleList);
+    message = await handleIsbnLookup(isbnFound);
   }
 
   async function handleInput(ev: KeyboardEvent) {
@@ -102,7 +106,7 @@
         //   message = `ISBN ${isbn} already exists in the database.`;
         //   return;
         // }
-        message = await handleIsbnLookup(isbnFound.isbn);
+        message = await handleIsbnLookup(isbnFound);
         // console.log("Spreadsheet after lookup: ", jsonSpreadsheet);
         break;
 
@@ -112,29 +116,31 @@
   }
 
   function prefillInput() {
-    const isbnNodes = document.querySelectorAll(
-      "input[maxlength='1']",
-    ) as NodeListOf<HTMLInputElement>;
+    if (!isbnFound.value) {
+      const isbnNodes = document.querySelectorAll(
+        "input[maxlength='1']",
+      ) as NodeListOf<HTMLInputElement>;
 
-    if (isbnType === 13) {
-      const isbnFirstNumber = [9, 7, 8];
+      if (isbnType === 13) {
+        const isbnFirstNumber = [9, 7, 8];
 
-      for (let ind = 0; ind < 3; ind++) {
-        isbnNodes.item(ind).value = isbnFirstNumber[ind].toString();
+        for (let ind = 0; ind < 3; ind++) {
+          isbnNodes.item(ind).value = isbnFirstNumber[ind].toString();
+        }
+        // Schedule focus after DOM update
+        setTimeout(() => {
+          isbnNodes.item(3).focus();
+        }, 0);
       }
-      // Schedule focus after DOM update
-      setTimeout(() => {
-        isbnNodes.item(3).focus();
-      }, 0);
-    }
-    if (isbnType === 10) {
-      for (let ind = 0; ind < 10; ind++) {
-        isbnNodes.item(ind).value = "";
+      if (isbnType === 10) {
+        for (let ind = 0; ind < 10; ind++) {
+          isbnNodes.item(ind).value = "";
+        }
+        // Schedule focus after DOM update
+        setTimeout(() => {
+          isbnNodes.item(0).focus();
+        }, 0);
       }
-      // Schedule focus after DOM update
-      setTimeout(() => {
-        isbnNodes.item(0).focus();
-      }, 0);
     }
   }
 
@@ -144,16 +150,19 @@
   }
 
   $effect(() => {
-    prefillInput();
+    if (isbnType) prefillInput();
   });
 
-  async function handlePaste(ev: ClipboardEvent, eleArr: HTMLInputElement[]) {
-    ev.preventDefault();
-    const pastedText = ev.clipboardData?.getData("text") || "";
-    console.log("pasted Text Raw: ", pastedText);
+  $effect(() => {
+    if (receivedIsbn && receivedIsbn !== currentIsbn && !isbnFound.value) {
+      currentIsbn = receivedIsbn;
+      isbnFound.isbn = receivedIsbn;
+      handleIsbnLookup(isbnFound).then((data) => untrack(() => message = data))
+      console.log("Input Effect");
+    }
+  });
 
-     isbnFound.isbn = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
-
+  function handleIsbn() {
     if (isbnFound.isbn.length > 0) {
       isAnimating = true;
 
@@ -172,7 +181,11 @@
       }
 
       // If all fields are filled, trigger lookup
-      if (isbnFound.isbn.length === 13 || isbnFound.isbn.length === 10 || isbnFound.isbn.length === 9) {
+      if (
+        isbnFound.isbn.length === 13 ||
+        isbnFound.isbn.length === 10 ||
+        isbnFound.isbn.length === 9
+      ) {
         setTimeout(async () => {
           // const recordExists = await checkDB(isbn);
           // if (recordExists) {
@@ -180,7 +193,7 @@
           //   message = `ISBN ${isbn} already exists in the database.`;
           //   return;
           // }
-          message = await handleIsbnLookup(isbnFound.isbn);
+          message = await handleIsbnLookup(isbnFound);
           isAnimating = false;
         }, 200 * isbnFound.isbn.length);
       } else {
@@ -189,21 +202,34 @@
     }
   }
 
+  async function handlePaste(ev: ClipboardEvent) {
+    ev.preventDefault();
+    const pastedText = ev.clipboardData?.getData("text") || "";
+    isbnFound.isbn = pastedText.replace(/\D/g, "").slice(0, 13); // Extract only digits, max 13
+
+    handleIsbn();
+  }
+
   // svelte-ignore non_reactive_update
   let sheet: SpreadSheet;
   $effect(() => {
-    if (message !== "Isbn Found Please Input the accession Number") {
-      setTimeout(() => {
-
-        message = "";
-      }, 4000);
-    }
-    else {
+    console.log("SEcond Effect");
+    // Only process specific messages that indicate a successful lookup
+    if (
+      message === "Isbn Found Please Input the accession Number" ||
+      message.includes("You have done that isbn already")
+    ) {
       isbnFound.value = true;
       setTimeout(() => {
         accessionInput.value = "";
         accessionInput.focus();
       }, 0);
+    } else if (message && message !== "") {
+      // For error/info messages, show them and auto-clear after 4 seconds
+      prefillInput();
+      setTimeout(() => {
+        message = "";
+      }, 4000);
     }
   });
 
@@ -213,7 +239,7 @@
     const eleList = document.querySelectorAll(
       'input[maxlength="1"]',
     ) as NodeListOf<HTMLInputElement>;
-    const eleArr = [...eleList];
+     eleArr = [...eleList];
     sheet = SpreadSheet.getInstance();
 
     //set cursor at end of input on focus
@@ -228,7 +254,7 @@
 
     // Handle paste event
     window.addEventListener("paste", (event) => {
-      handlePaste(event as ClipboardEvent, eleArr);
+      handlePaste(event as ClipboardEvent);
     });
   });
 </script>
@@ -249,53 +275,44 @@
 <div class="message">{message}</div>
 
 <!-- <input type="number" name="1" id="input-1" maxlength="1" /> -->
-  {#if !isbnFound.value}
-
-<div class="isbn-input">
-  <div class="isbn-type">ISBN-{isbnType}:</div>
-  {#each { length: isbnType } as _, num}
-    {@render inputBlock(num)}
-    <!-- {#if num === 2 || num === 4 || num === 9}
+{#if !isbnFound.value}
+  <div class="isbn-input">
+    <div class="isbn-type">ISBN-{isbnType}:</div>
+    {#each { length: isbnType } as _, num}
+      {@render inputBlock(num)}
+      <!-- {#if num === 2 || num === 4 || num === 9}
       <div class="dash">-</div>
     {/if} -->
     {/each}
   </div>
 {:else}
-<div class="isbn-input">
-  <div class="isbn-type">Accession No:</div>
-  <input bind:this={accessionInput} type="text" name="accession" id="accession-input" maxlength="20" />
-</div>
+  <AccessionInput bind:message bind:isbnFound bind:accessionInput />
 {/if}
 
-<button onclick={async () =>{ 
-  if (isbnFound.value) {
-    const accessionNumber = accessionInput.value.trim();
-    if (accessionNumber === "") {
-      message = "Please enter a valid accession number.";
-      return;
+<button
+  onclick={async () => {
+    if (isbnFound.value) {
+      const accessionNumber = accessionInput.value.trim();
+
+      // Update the accession number in the database
+      message = sheet.updateSpreadsheet(isbnFound.isbn, accessionNumber);
+      isbnFound.value = false;
+    } else {
+      await handleSearch();
     }
-    // Update the accession number in the database
-   sheet.updateSpreadsheet(isbnFound.isbn, accessionNumber);
-    message = `Accession number ${accessionNumber} added for ISBN ${isbnFound.isbn}.`;
-    isbnFound.value = false;
-              const dbIndex = db.spreadsheets.update(isbnFound.isbn as unknown as ISpreadsheetData, {
-            accession: accessionNumber,
-          });
-          console.log("dbIndex: ", dbIndex);
-    // accessionInput.value = "";
-  } else {  
-    await handleSearch();
-  }
-}} id="search">{isbnFound.value ? "Update Accession Number" : "Search For ISBN"}</button>
+  }}
+  id="search"
+  >{isbnFound.value ? "Update Accession Number" : "Search For ISBN"}</button
+>
 
 <style>
-  .isbn-input {
+  :global(.isbn-input) {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
     align-items: center;
   }
-  .isbn-type {
+  :global(.isbn-type) {
     font-weight: bold;
     margin-right: 0.5rem;
     font-size: large;
@@ -364,12 +381,5 @@
   }
   #search:hover {
     background-color: #007f63;
-  }
-  #accession-input {
-    width: 10ch;
-    font-size: large;
-    padding: 0.5rem 0.7rem;
-    margin: 0.5rem 0.2rem 0;
-    transition: all 0.2s ease;
   }
 </style>
