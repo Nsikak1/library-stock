@@ -6,7 +6,7 @@ import { p as G, i as P } from "../chunks/Cuf2qAe0.js";
 import { R as A, a as y } from "../chunks/CKy_A0-a.js";
 import { R as V, S as j, A as J } from "../chunks/B-6X-cLz.js";
 import { b as N } from "../chunks/BOZTa0ta.js";
-import { b as F } from "../chunks/F9G5yKTx.js";
+import { b as F } from "../chunks/59Ynzdw3.js";
 import { r as K } from "../chunks/CYOjpWgn.js";
 const X = "";
 function Y(...l) {
@@ -32,7 +32,7 @@ function ee(l, d) {
         var _a;
         console.log("Room Connected successfully"), console.log("Room state:", o.state), console.log("Local participant:", (_a = o.localParticipant) == null ? void 0 : _a.identity);
       }), o.on(y.ParticipantConnected, (w) => {
-        console.log(`Participant ${w.identity} connected`), console.log("Participant details:", w), u(true), window.location.assign("/spreadsheet");
+        console.log(`Participant ${w.identity} connected`), console.log("Participant details:", w), u(true), window.location.assign("spreadsheet");
       }), o.on(y.Disconnected, () => {
         console.warn("Disconnected from room");
       }), o.on(y.ParticipantDisconnected, (w) => {
