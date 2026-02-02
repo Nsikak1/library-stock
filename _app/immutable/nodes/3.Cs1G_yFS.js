@@ -1,9 +1,9 @@
-import { f as fa, a as ha } from "../chunks/BjTfwbem.js";
-import { o as da } from "../chunks/B3YYK8RE.js";
-import { aa as va, k as vt, ab as pa, y as ya, x as ma, h as ga, ac as wa, a5 as $a, f as ba, s as pt, M as Ta, ad as Ca, a7 as Pa, a8 as _a, a9 as Aa, Q as Sa } from "../chunks/CdrJcFTF.js";
-import { d as Ea } from "../chunks/Cuooy7pM.js";
-import { r as Oa } from "../chunks/C8_7hY_V.js";
-import { b as Wr } from "../chunks/DdzU8gf5.js";
+import { f as fa, a as ha } from "../chunks/CExXKETe.js";
+import { o as da } from "../chunks/rookMbWl.js";
+import { ab as va, o as vt, ac as pa, D as ya, C as ma, h as ga, ad as wa, p as $a, f as ba, c as pt, g as Ta, a as Ca, b as Pa, a9 as _a, aa as Aa, s as Sa } from "../chunks/D_hOHglV.js";
+import { d as Ea } from "../chunks/DnPr7c3f.js";
+import { r as Oa } from "../chunks/DRTDbymR.js";
+import { b as kr } from "../chunks/HdR-RNnD.js";
 import { Z as xa, R as Dr } from "../chunks/B-6X-cLz.js";
 function Ra(d, S, R = S) {
   var j = /* @__PURE__ */ new WeakSet();
@@ -54,10 +54,10 @@ async function ja(d = {}) {
       throw new Error(r.status + " : " + r.url);
     };
   }
-  var st = console.log.bind(console), D = console.error.bind(console), Z, A = false, k, F, I, W, V, G, ut, $, Yt, Zt, Jt = false;
+  var st = console.log.bind(console), D = console.error.bind(console), Z, A = false, F, W, I, k, V, G, ut, $, Yt, Zt, Jt = false;
   function Kt() {
     var t = Et.buffer;
-    I = new Int8Array(t), V = new Int16Array(t), c.HEAPU8 = W = new Uint8Array(t), G = new Uint16Array(t), ut = new Int32Array(t), $ = new Uint32Array(t), Yt = new Float32Array(t), Zt = new Float64Array(t);
+    I = new Int8Array(t), V = new Int16Array(t), c.HEAPU8 = k = new Uint8Array(t), G = new Uint16Array(t), ut = new Int32Array(t), $ = new Uint32Array(t), Yt = new Float32Array(t), Zt = new Float64Array(t);
   }
   function Vr() {
     if (c.preRun) for (typeof c.preRun == "function" && (c.preRun = [c.preRun]); c.preRun.length; ) Qr(c.preRun.shift());
@@ -74,7 +74,7 @@ async function ja(d = {}) {
     var r, e;
     (r = c.onAbort) === null || r === void 0 || r.call(c, t), t = "Aborted(" + t + ")", D(t), A = true, t += ". Build with -sASSERTIONS for more info.";
     var n = new WebAssembly.RuntimeError(t);
-    throw (e = F) === null || e === void 0 || e(n), n;
+    throw (e = W) === null || e === void 0 || e(n), n;
   }
   var mt;
   function Hr() {
@@ -134,14 +134,14 @@ async function ja(d = {}) {
   var Xt = (t) => {
     for (; t.length > 0; ) t.shift()(c);
   }, tr = [], qr = (t) => tr.push(t), rr = [], Qr = (t) => rr.push(t), p = (t) => Cr(t), y = () => Pr(), gt = [], wt = 0, Yr = (t) => {
-    var r = new kt(t);
+    var r = new Ft(t);
     return r.get_caught() || (r.set_caught(true), wt--), r.set_rethrown(false), gt.push(r), Ar(t), br(t);
   }, B = 0, Zr = () => {
     v(0, 0);
     var t = gt.pop();
     _r(t.excPtr), B = 0;
   };
-  class kt {
+  class Ft {
     constructor(r) {
       this.excPtr = r, this.ptr = r - 24;
     }
@@ -179,10 +179,10 @@ async function ja(d = {}) {
       return $[this.ptr + 16 >> 2];
     }
   }
-  var $t = (t) => Tr(t), Ft = (t) => {
+  var $t = (t) => Tr(t), Wt = (t) => {
     var r = B;
     if (!r) return $t(0), 0;
-    var e = new kt(r);
+    var e = new Ft(r);
     e.set_adjusted_ptr(r);
     var n = e.get_type();
     if (!n) return $t(0), r;
@@ -192,17 +192,17 @@ async function ja(d = {}) {
       if (Sr(a, n, i)) return $t(a), r;
     }
     return $t(n), r;
-  }, Jr = () => Ft([]), Kr = (t) => Ft([t]), Xr = (t, r) => Ft([t, r]), te = () => {
+  }, Jr = () => Wt([]), Kr = (t) => Wt([t]), Xr = (t, r) => Wt([t, r]), te = () => {
     var t = gt.pop();
     t || jt("no exception to throw");
     var r = t.excPtr;
     throw t.get_rethrown() || (gt.push(t), t.set_rethrown(true), t.set_caught(false), wt++), B = r, B;
   }, re = (t, r, e) => {
-    var n = new kt(t);
+    var n = new Ft(t);
     throw n.init(r, e), B = t, wt++, B;
   }, ee = () => wt, ne = (t) => {
     throw B || (B = t), B;
-  }, ae = () => jt(""), bt = {}, Wt = (t) => {
+  }, ae = () => jt(""), bt = {}, kt = (t) => {
     for (; t.length; ) {
       var r = t.pop(), e = t.pop();
       e(r);
@@ -247,7 +247,7 @@ async function ja(d = {}) {
           const f = u[l], h = o[l], w = f.getter, T = f.getterContext, _ = o[l + a.length], P = f.setter, C = f.setterContext;
           s[f.fieldName] = { read: (b) => h.fromWireType(w(T, b)), write: (b, tt) => {
             var O = [];
-            P(C, b, _.toWireType(O, tt)), Wt(O);
+            P(C, b, _.toWireType(O, tt)), kt(O);
           }, optional: h.optional };
         }
       }
@@ -265,7 +265,7 @@ async function ja(d = {}) {
   }, se = (t, r, e, n, a) => {
   }, E = (t) => {
     for (var r = ""; ; ) {
-      var e = W[t++];
+      var e = k[t++];
       if (!e) return r;
       r += String.fromCharCode(e);
     }
@@ -298,7 +298,7 @@ async function ja(d = {}) {
     }, toWireType: function(a, i) {
       return i ? e : n;
     }, readValueFromPointer: function(a) {
-      return this.fromWireType(W[a]);
+      return this.fromWireType(k[a]);
     }, destructorFunction: null });
   }, ce = (t) => ({ count: t.count, deleteScheduled: t.deleteScheduled, preservePointerOnDelete: t.preservePointerOnDelete, ptr: t.ptr, ptrType: t.ptrType, smartPtr: t.smartPtr, smartPtrType: t.smartPtrType }), Dt = (t) => {
     function r(e) {
@@ -510,10 +510,10 @@ async function ja(d = {}) {
       var b = Mt(f, function() {
         if (Object.getPrototypeOf(this) !== tt) throw new ct(`Use 'new' to construct ${f}`);
         if (O.constructor_body === void 0) throw new ct(`${f} has no accessible constructor`);
-        for (var kr = arguments.length, xt = new Array(kr), Rt = 0; Rt < kr; Rt++) xt[Rt] = arguments[Rt];
-        var Fr = O.constructor_body[xt.length];
-        if (Fr === void 0) throw new ct(`Tried to invoke ctor of ${f} with invalid number of parameters (${xt.length}) - expected (${Object.keys(O.constructor_body).toString()}) parameters instead!`);
-        return Fr.apply(this, xt);
+        for (var Fr = arguments.length, xt = new Array(Fr), Rt = 0; Rt < Fr; Rt++) xt[Rt] = arguments[Rt];
+        var Wr = O.constructor_body[xt.length];
+        if (Wr === void 0) throw new ct(`Tried to invoke ctor of ${f} with invalid number of parameters (${xt.length}) - expected (${Object.keys(O.constructor_body).toString()}) parameters instead!`);
+        return Wr.apply(this, xt);
       }), tt = Object.create(C, { constructor: { value: b } });
       b.prototype = tt;
       var O = new ye(f, b, tt, w, P, i, s, l);
@@ -542,7 +542,7 @@ async function ja(d = {}) {
       for (var C = 0; C < f; ++C) h[C] = r[C + 2].toWireType(T, C < 0 || arguments.length <= C ? void 0 : arguments[C]), w.push(h[C]);
       var b = n(...w);
       function tt(O) {
-        if (u) Wt(T);
+        if (u) kt(T);
         else for (var N = s ? 1 : 2; N < r.length; N++) {
           var Ot = N === 1 ? P : h[N - 2];
           r[N].destructorFunction !== null && r[N].destructorFunction(Ot);
@@ -602,7 +602,7 @@ async function ja(d = {}) {
   } }, dr = { name: "emscripten::val", fromWireType: (t) => {
     var r = U.toValue(t);
     return Nt(t), r;
-  }, toWireType: (t, r) => U.toHandle(r), readValueFromPointer: lt, destructorFunction: null }, ke = (t) => H(t, dr), Fe = (t, r) => {
+  }, toWireType: (t, r) => U.toHandle(r), readValueFromPointer: lt, destructorFunction: null }, Fe = (t) => H(t, dr), We = (t, r) => {
     switch (r) {
       case 4:
         return function(e) {
@@ -615,8 +615,8 @@ async function ja(d = {}) {
       default:
         throw new TypeError(`invalid float width (${r}): ${t}`);
     }
-  }, We = (t, r, e) => {
-    r = E(r), H(t, { name: r, fromWireType: (n) => n, toWireType: (n, a) => a, readValueFromPointer: Fe(r, e), destructorFunction: null });
+  }, ke = (t, r, e) => {
+    r = E(r), H(t, { name: r, fromWireType: (n) => n, toWireType: (n, a) => a, readValueFromPointer: We(r, e), destructorFunction: null });
   }, De = (t, r, e, n, a, i, o, s) => {
     var u = Ut(r, e);
     t = E(t), t = fr(t), a = M(n, a), or(t, function() {
@@ -628,7 +628,7 @@ async function ja(d = {}) {
   }, Ve = (t, r, e) => {
     switch (r) {
       case 1:
-        return e ? (n) => I[n] : (n) => W[n];
+        return e ? (n) => I[n] : (n) => k[n];
       case 2:
         return e ? (n) => V[n >> 1] : (n) => G[n >> 1];
       case 4:
@@ -673,7 +673,7 @@ async function ja(d = {}) {
       }
     }
     return r[e] = 0, e - a;
-  }, it = (t, r, e) => Be(t, W, r, e), vr = (t) => {
+  }, it = (t, r, e) => Be(t, k, r, e), vr = (t) => {
     for (var r = 0, e = 0; e < t.length; ++e) {
       var n = t.charCodeAt(e);
       n <= 127 ? r++ : n <= 2047 ? r += 2 : n >= 55296 && n <= 57343 ? (r += 4, ++e) : r += 3;
@@ -707,7 +707,7 @@ async function ja(d = {}) {
       }
     }
     return i;
-  }, Ne = (t, r, e) => t ? mr(W, t, r, e) : "", Le = (t, r) => {
+  }, Ne = (t, r, e) => t ? mr(k, t, r, e) : "", Le = (t, r) => {
     r = E(r), H(t, { name: r, fromWireType(e) {
       var n = $[e >> 2], a = e + 4, i;
       return i = Ne(a, n, true), Q(e), i;
@@ -716,7 +716,7 @@ async function ja(d = {}) {
       var a, i = typeof n == "string";
       i || ArrayBuffer.isView(n) && n.BYTES_PER_ELEMENT == 1 || g("Cannot pass non-string to std::string"), i ? a = vr(n) : a = n.length;
       var o = Gt(4 + a + 1), s = o + 4;
-      return $[o >> 2] = a, i ? it(n, s, a + 1) : W.set(n, s), e !== null && e.push(Q, o), o;
+      return $[o >> 2] = a, i ? it(n, s, a + 1) : k.set(n, s), e !== null && e.push(Q, o), o;
     }, readValueFromPointer: lt, destructorFunction(e) {
       Q(e);
     } });
@@ -819,7 +819,7 @@ async function ja(d = {}) {
     t > 9 && (X[t + 1] += 1);
   }, cn = (t, r, e, n, a) => Lt[t](r, e, n, a), fn = (t) => {
     var r = U.toValue(t);
-    Wt(r), Nt(t);
+    kt(r), Nt(t);
   }, hn = (t, r, e, n) => {
     var a = (/* @__PURE__ */ new Date()).getFullYear(), i = new Date(a, 0, 1), o = new Date(a, 6, 1), s = i.getTimezoneOffset(), u = o.getTimezoneOffset(), l = Math.max(s, u);
     $[t >> 2] = l * 60, ut[r >> 2] = +(s != u);
@@ -835,7 +835,7 @@ async function ja(d = {}) {
     } catch {
     }
   }, yn = (t) => {
-    var r = W.length;
+    var r = k.length;
     t >>>= 0;
     var e = dn();
     if (t > e) return false;
@@ -879,7 +879,7 @@ async function ja(d = {}) {
     for (var a = 0, i = 0; i < e; i++) {
       var o = $[r >> 2], s = $[r + 4 >> 2];
       r += 8;
-      for (var u = 0; u < s; u++) Cn(t, W[o + u]);
+      for (var u = 0; u < s; u++) Cn(t, k[o + u]);
       a += s;
     }
     return $[n >> 2] = a, 0;
@@ -889,7 +889,7 @@ async function ja(d = {}) {
   function An(t) {
     $r = t.ya, Q = c._free = t.za, Gt = c._malloc = t.Ba, br = t.Ca, v = t.Da, Tr = t.Ea, Cr = t.Fa, Pr = t.Ga, _r = t.Ha, Ar = t.Ia, Sr = t.Ja, q.viijii = t.Ka, Er = q.iiijj = t.La, q.jiji = t.Ma, Or = q.jiiii = t.Na, q.iiiiij = t.Oa, q.iiiiijj = t.Pa, q.iiiiiijj = t.Qa, Et = t.wa, xr = t.Aa;
   }
-  var Sn = { s: Yr, w: Zr, a: Jr, j: Kr, m: Xr, Q: te, p: re, U: ee, d: ne, ca: ae, ta: oe, ba: se, oa: le, ra: Oe, qa: Re, H: je, ma: ke, X: We, Y: De, x: Me, t: Ie, sa: Ue, na: Le, R: Je, I: Ke, ua: Xe, pa: tn, N: sn, va: Nt, D: un, S: ln, M: cn, ia: fn, da: hn, ga: yn, ea: gn, fa: wn, ha: $n, $: bn, V: Pn, K: Zn, C: Xn, Z: Fn, T: ia, r: Gn, b: jn, E: Yn, ka: ra, c: Wn, ja: ea, h: kn, i: Mn, q: Bn, P: Qn, v: Ln, F: zn, L: qn, z: ta, J: oa, aa: sa, _: ua, f: Dn, l: En, e: Rn, g: xn, O: aa, k: On, la: Jn, o: Nn, B: In, u: Kn, W: Un, A: na, n: Vn, G: Hn, y: _n };
+  var Sn = { s: Yr, w: Zr, a: Jr, j: Kr, m: Xr, Q: te, p: re, U: ee, d: ne, ca: ae, ta: oe, ba: se, oa: le, ra: Oe, qa: Re, H: je, ma: Fe, X: ke, Y: De, x: Me, t: Ie, sa: Ue, na: Le, R: Je, I: Ke, ua: Xe, pa: tn, N: sn, va: Nt, D: un, S: ln, M: cn, ia: fn, da: hn, ga: yn, ea: gn, fa: wn, ha: $n, $: bn, V: Pn, K: Zn, C: Xn, Z: Wn, T: ia, r: Gn, b: jn, E: Yn, ka: ra, c: kn, ja: ea, h: Fn, i: Mn, q: Bn, P: Qn, v: Ln, F: zn, L: qn, z: ta, J: oa, aa: sa, _: ua, f: Dn, l: En, e: Rn, g: xn, O: aa, k: On, la: Jn, o: Nn, B: In, u: Kn, W: Un, A: na, n: Vn, G: Hn, y: _n };
   function En(t, r) {
     var e = y();
     try {
@@ -935,7 +935,7 @@ async function ja(d = {}) {
       v(1, 0);
     }
   }
-  function kn(t, r, e, n) {
+  function Fn(t, r, e, n) {
     var a = y();
     try {
       return m(t)(r, e, n);
@@ -944,7 +944,7 @@ async function ja(d = {}) {
       v(1, 0);
     }
   }
-  function Fn(t, r, e, n, a, i) {
+  function Wn(t, r, e, n, a, i) {
     var o = y();
     try {
       return m(t)(r, e, n, a, i);
@@ -953,7 +953,7 @@ async function ja(d = {}) {
       v(1, 0);
     }
   }
-  function Wn(t, r, e) {
+  function kn(t, r, e) {
     var n = y();
     try {
       return m(t)(r, e);
@@ -1209,7 +1209,7 @@ async function ja(d = {}) {
     Vr();
     function t() {
       var r, e;
-      c.calledRun = true, !A && (Mr(), (r = k) === null || r === void 0 || r(c), (e = c.onRuntimeInitialized) === null || e === void 0 || e.call(c), Ir());
+      c.calledRun = true, !A && (Mr(), (r = F) === null || r === void 0 || r(c), (e = c.onRuntimeInitialized) === null || e === void 0 || e.call(c), Ir());
     }
     c.setStatus ? (c.setStatus("Running..."), setTimeout(() => {
       setTimeout(() => c.setStatus(""), 1), t();
@@ -1217,53 +1217,53 @@ async function ja(d = {}) {
   }
   var dt;
   return dt = await Gr(), la(), Jt ? S = c : S = new Promise((t, r) => {
-    k = t, F = r;
+    F = t, W = r;
   }), S;
 }
-async function ka(d, S) {
+async function Fa(d, S) {
   return xa(ja, d, S);
 }
-var Fa = fa('<div class="qr-code"></div> <main class="camera-container"><video id="scanner" width="400" height="320" autoplay></video> <button id="camera-button">Scan the barcode</button> <button id="camera-button">Take a picture</button> <canvas id="video-feed" width="400" height="320"></canvas> <div class="hi">Hi</div> <input id="send-message" type="text"/> <button>Send Message</button></main>', 3);
+var Wa = fa('<div class="qr-code"></div> <main class="camera-container"><video id="scanner" width="400" height="320" autoplay></video> <button id="camera-button">Scan the barcode</button> <button id="camera-button">Take a picture</button> <canvas id="video-feed" width="400" height="320"></canvas> <div class="hi">Hi</div> <input id="send-message" type="text"/> <button>Send Message</button></main>', 3);
 function Ba(d, S) {
   $a(S, true);
   let R, j, c = Ca("");
   const x = { video: { facingMode: "environment" } }, rt = { tryHarder: true, maxNumberOfSymbols: 1 };
   Dr("Hello World", { format: "QRCode", scale: 3 });
   function Y(A) {
-    const k = document.getElementById("scanner");
-    navigator.mediaDevices.getUserMedia({ video: x.video, audio: false }).then((F) => {
-      k.srcObject = F, k.play();
-    }).catch((F) => console.error(`An error occurred ${F}`));
+    const F = document.getElementById("scanner");
+    navigator.mediaDevices.getUserMedia({ video: x.video, audio: false }).then((W) => {
+      F.srcObject = W, F.play();
+    }).catch((W) => console.error(`An error occurred ${W}`));
   }
   function z() {
-    const A = document.getElementById("scanner"), k = document.getElementById("video-feed"), F = document.querySelector(".hi"), I = k.getContext("2d");
-    I && A.readyState === A.HAVE_ENOUGH_DATA ? (I.drawImage(A, 0, 0, k.width, k.height), F.innerText = "Scanning...", k.toBlob((W) => {
-      W && ka(W, rt).then((V) => {
+    const A = document.getElementById("scanner"), F = document.getElementById("video-feed"), W = document.querySelector(".hi"), I = F.getContext("2d");
+    I && A.readyState === A.HAVE_ENOUGH_DATA ? (I.drawImage(A, 0, 0, F.width, F.height), W.innerText = "Scanning...", F.toBlob((k) => {
+      k && Fa(k, rt).then((V) => {
         if (console.log("Barcodes found: ", V), V && V.length > 0) {
           const G = V[0].text;
-          console.log("barcode message: ", G), F.innerText = G;
-        } else F.innerText = "No barcode found";
+          console.log("barcode message: ", G), W.innerText = G;
+        } else W.innerText = "No barcode found";
       }).catch((V) => {
-        console.error("Error reading barcodes: ", V), F.innerText = "Error scanning barcode";
+        console.error("Error reading barcodes: ", V), W.innerText = "Error scanning barcode";
       });
-    }, "image/png")) : F.innerText = "Video not ready - try again";
+    }, "image/png")) : W.innerText = "Video not ready - try again";
   }
   da(async () => {
     try {
-      const k = await Dr("text", { format: "QRCode", scale: 5 });
-      j.innerHTML = k.svg;
+      const F = await Dr("text", { format: "QRCode", scale: 5 });
+      j.innerHTML = F.svg;
     } catch (A) {
       console.error("Error generating QR code:", A), j.innerHTML = "<p>Error generating QR code.</p>";
     }
   });
-  var et = Fa(), yt = ba(et);
-  Wr(yt, (A) => j = A, () => j);
+  var et = Wa(), yt = ba(et);
+  kr(yt, (A) => j = A, () => j);
   var ot = pt(yt, 2), nt = pt(_a(ot), 2);
   nt.__click = Y;
   var st = pt(nt, 2);
   st.__click = z;
   var D = pt(st, 6);
-  Oa(D), Wr(D, (A) => R = A, () => R);
+  Oa(D), kr(D, (A) => R = A, () => R);
   var Z = pt(D, 2);
   Z.__click = () => {
     console.log("Clicked");

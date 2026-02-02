@@ -1,6 +1,6 @@
 var _a;
-import { o as i, at as f, aF as v, D as u, aG as E, aH as p, h as d, u as o, aI as h, d as T, aJ as g, i as y, aK as N } from "./CdrJcFTF.js";
-function w(a) {
+import { x as i, at as f, aF as v, K as u, aG as E, aH as p, h as d, z as o, aI as h, k as T, aJ as g, m as y, aK as N } from "./D_hOHglV.js";
+function x(a) {
   var n = document.createElement("template");
   return n.innerHTML = a.replaceAll("<!>", "<!---->"), n.content;
 }
@@ -12,11 +12,11 @@ function F(a, n) {
   var e = (n & E) !== 0, l = (n & p) !== 0, t, _ = !a.startsWith("<!>");
   return () => {
     if (d) return r(o, null), o;
-    t === void 0 && (t = w(_ ? a : "<!>" + a), e || (t = f(t)));
+    t === void 0 && (t = x(_ ? a : "<!>" + a), e || (t = f(t)));
     var s = l || v ? document.importNode(t, true) : t.cloneNode(true);
     if (e) {
-      var c = f(s), m = s.lastChild;
-      r(c, m);
+      var m = f(s), c = s.lastChild;
+      r(m, c);
     } else r(s, s);
     return s;
   };
@@ -42,8 +42,8 @@ function C(a, n) {
   }
   a !== null && a.before(n);
 }
-const x = "5";
-typeof window < "u" && ((_a = window.__svelte ?? (window.__svelte = {})).v ?? (_a.v = /* @__PURE__ */ new Set())).add(x);
+const w = "5";
+typeof window < "u" && ((_a = window.__svelte ?? (window.__svelte = {})).v ?? (_a.v = /* @__PURE__ */ new Set())).add(w);
 N();
 export {
   C as a,
