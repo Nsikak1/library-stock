@@ -58,7 +58,7 @@
         console.log(`Participant ${participant.identity} connected`);
         console.log("Participant details:", participant);
         connected = true;
-        window.location.assign("/spreadsheet");
+        window.location.assign("spreadsheet");
       });
 
       // room.on(RoomEvent.co, () => {
