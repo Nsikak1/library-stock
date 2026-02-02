@@ -1,34 +1,34 @@
-import { P as g, a3 as d, O as c, D as m, a4 as i, a5 as b, g as p, a6 as v, T as h, a7 as k } from "./D_hOHglV.js";
-function x(a = false) {
+import { F as g, H as d, E as c, x as m, I as i, J as b, g as p, K as v, M as h, O as k } from "./BR3rKFbi.js";
+function y(n = false) {
   const s = g, e = s.l.u;
   if (!e) return;
   let f = () => v(s.s);
-  if (a) {
-    let n = 0, t = {};
+  if (n) {
+    let a = 0, t = {};
     const _ = h(() => {
       let l = false;
       const r = s.s;
       for (const o in r) r[o] !== t[o] && (t[o] = r[o], l = true);
-      return l && n++, n;
+      return l && a++, a;
     });
     f = () => p(_);
   }
   e.b.length && d(() => {
     u(s, f), i(e.b);
   }), c(() => {
-    const n = m(() => e.m.map(b));
+    const a = m(() => e.m.map(b));
     return () => {
-      for (const t of n) typeof t == "function" && t();
+      for (const t of a) typeof t == "function" && t();
     };
   }), e.a.length && c(() => {
     u(s, f), i(e.a);
   });
 }
-function u(a, s) {
-  if (a.l.s) for (const e of a.l.s) p(e);
+function u(n, s) {
+  if (n.l.s) for (const e of n.l.s) p(e);
   s();
 }
 k();
 export {
-  x as i
+  y as i
 };
