@@ -7,13 +7,24 @@ import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 import fs from "fs";
 
-export default defineConfig({
+export default defineConfig(
+  {
   assetsInclude: ["**/*.numbers", "**/*.xls", "**/*.xlsx"],
   plugins: [
     wasm(),
     topLevelAwait(), // Required for compatibility with older browsers
 
     sveltekit(),
+
+    // {
+    //   name: "strip-console-log",
+    //   transform(code, id) {
+    //     if (process.env.NODE_ENV === "production" && /\.[jt]sx?$/.test(id)) {
+    //       return code.replace(/console\.log\([^)]*\);\s*/g, "");
+    //     }
+    //   },
+    // },
+
 
     {
       name: "sheet-base64",
@@ -24,6 +35,11 @@ export default defineConfig({
       },
     },
   ],
+
+  
+    // esbuild: {
+    //   drop: mode === "production" ? ["console.log"] : [],
+    // },
 
   server: {
     https: {
@@ -75,4 +91,5 @@ export default defineConfig({
       },
     ],
   },
-});
+}
+);

@@ -2,6 +2,55 @@ import { read, utils, writeFile, type WorkBook, type WorkSheet } from "xlsx";
 import { resolve } from "$app/paths";
 import { db, type ISpreadsheetData, spreadsheetKeys } from "../db";
 
+declare let menu: HTMLDivElement;
+
+export function handleContextMenu(event: MouseEvent) {
+  event.preventDefault();
+  const target = event.target as HTMLElement;
+  const row = target.closest("tr") as HTMLTableRowElement;
+  const menu = document.getElementById("context_menu") as HTMLDivElement;
+
+  if (row) {
+    menu.style.top = `${event.clientY}px`;
+    menu.style.left = `${event.clientX}px`;
+    menu.classList.remove("hidden");
+
+    document.getElementById('delete_row')!.onclick = () => { 
+      const isbn = row.children[2]?.textContent?.trim() || "";
+      console.log(isbn);
+      
+      if (isbn) {
+        const spreadSheet = SpreadSheet.getInstance();
+        const rowIndex = spreadSheet.findRowIndexByIsbn(isbn);
+        if (rowIndex !== -1) {
+          // Remove from spreadsheet data
+          // spreadSheet.m_jsonSpreadsheet.splice(rowIndex, 1);
+          // Update worksheet
+          // spreadSheet.worksheet = utils.json_to_sheet(spreadSheet.m_jsonSpreadsheet);
+          spreadSheet.deleteSpreadsheet(isbn);
+          // Update state to re-render
+          spreadSheet.renderSpreadsheet();
+          // Remove from database
+          // db.spreadsheets.where("isbn").equals(isbn).delete().then(() => {
+          //   console.log(`Row with ISBN ${isbn} deleted from database.`);
+          // }).catch((error) => {
+          //   console.error("Error deleting row from database:", error);
+          // });
+        }
+      }
+      // Hide context menu after deletion
+      menu.classList.add("hidden");
+     }
+
+    document.addEventListener("click", function (event) {
+      if (event.button !== 2) {
+        // Ensure it's a left-click or general click event
+        // menu.style.display = "none";
+        menu.classList.add("hidden");
+      }
+    }, { once: true } );
+  }
+}
 export const spreadsheetState = $state({
   data: [] as {}[],
 });
@@ -45,6 +94,10 @@ export default class SpreadSheet {
       return;
     }
     this.workbook = utils.book_new();
+     const date = new Date();
+      const formattedDate = date.toDateString().split(" ").join("-");
+
+    window.localStorage.setItem("begin_date", formattedDate);
     this.worksheet = utils.aoa_to_sheet([spreadsheetKeys]);
     utils.book_append_sheet(this.workbook, this.worksheet, "Books");
     this.m_jsonSpreadsheet = utils.sheet_to_json(this.worksheet, {
@@ -195,19 +248,16 @@ export default class SpreadSheet {
 
   public updateSpreadsheet(isbn: string, accession: string = "N/A") {
     if (!this.workbook) {
-      console.error( "Workbook is not loaded yet.");
+      console.error("Workbook is not loaded yet.");
       return "Workbook is not loaded yet.";
     }
-        if (accession === "") {
+    if (accession === "") {
       return "Please enter a valid accession number.";
     }
     console.log("jsonSpreadsheet", this.m_jsonSpreadsheet);
 
     const rowIndex = this.findRowIndexByIsbn(isbn);
-    if (rowIndex === -1) {
-      console.error("Cannot update, ISBN not found:", isbn);
-      return;
-    }
+    if (rowIndex === -1) return;
     console.log("isbn found has rowIndex: ", rowIndex);
 
     const excelRowIndex = rowIndex + 1;
@@ -221,12 +271,34 @@ export default class SpreadSheet {
     }) as {}[];
 
     this.m_jsonSpreadsheet = sheet;
-       const dbIndex = db.spreadsheets.update(isbn as unknown as ISpreadsheetData, {
-            accession: accession,
-          });
+    db.spreadsheets.where("isbn").equals(isbn).modify({
+      accession: accession,
+    });
+    // const dbIndex = db.spreadsheets.update(
+    //   isbn as unknown as ISpreadsheetData,
+    //   {
+    //     accession: accession,
+    //   },
+    // );
     this.renderSpreadsheet();
     this.scrollToView(rowIndex);
     return `Accession number ${accession} added for ISBN ${isbn}.`;
+  }
+
+  public async deleteSpreadsheet(isbn: string) {
+    if (!this.workbook) {
+      console.error("Workbook is not loaded yet.");
+      return "Workbook is not loaded yet.";
+    }
+    const rowIndex = this.findRowIndexByIsbn(isbn);
+    this.m_jsonSpreadsheet.splice(rowIndex, 1);
+    this.worksheet = utils.json_to_sheet(this.m_jsonSpreadsheet);
+    const ans = await db.spreadsheets.where("isbn").equals(isbn).delete()
+    console.log("Deleting db: ", ans);
+    
+    
+    const row = this.getRowElementByIndex(rowIndex);
+
 
   }
 
@@ -238,13 +310,22 @@ export default class SpreadSheet {
     const rowIndex = this.m_jsonSpreadsheet.findIndex(
       (row: any) => row["isbn"] === isbn,
     );
+    console.log("This jsonSpreadsheet: ", this.m_jsonSpreadsheet);
+    
     if (rowIndex === -1) {
-      console.error("Row with the given ISBN not found.");
+      const rowIndex = this.m_jsonSpreadsheet.findIndex(
+      (row: any) => Object.values(row).includes(isbn)
+      );
+      console.log("rowIndex found by value: ", rowIndex);
+      if (rowIndex === -1) {
+        console.error("Row with the given ISBN not found.");
+      }
+      return rowIndex;
     }
     return rowIndex;
   }
   public getRowElementByIndex(index: number) {
-     const tbody = document.querySelector("tbody");
+    const tbody = document.querySelector("tbody");
 
     const trEle = tbody?.children;
     const ele = trEle?.item(index) as HTMLTableRowElement;
@@ -305,7 +386,10 @@ export default class SpreadSheet {
         "Books",
       );
       utils.sheet_add_aoa(this.worksheet, [labels], { origin: 0 });
-      writeFile(workbook, "backup.xlsx");
+      const begin_date = window.localStorage.getItem("begin_date") || "";
+      const date = new Date();
+      const formattedDate = date.toDateString().split(" ").join("-");
+      writeFile(workbook, begin_date ? "from" + begin_date + " to " + formattedDate + "-library_stock.xlsx" : formattedDate + "-library_stock.xlsx");
     } else {
       console.error("Workbook is not loaded.");
     }

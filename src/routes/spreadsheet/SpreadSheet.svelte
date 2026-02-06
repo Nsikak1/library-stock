@@ -1,12 +1,28 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import SpreadSheet, { labels } from "./sheetUtils.svelte.ts";
-  import { spreadsheetState } from "./sheetUtils.svelte.ts";
+  import { spreadsheetState, handleContextMenu } from "./sheetUtils.svelte.ts";
   import { db, type ISpreadsheetData } from "../db.ts";
 
   let sheet: SpreadSheet;
   let tableBody: HTMLElement;
+  let contextMenu: HTMLDivElement;
 
+  function handleUpdate(
+    newAccessionCell: HTMLTableCellElement,
+    rowIsbn: string,
+  ) {
+    newAccessionCell.contentEditable = "false";
+    if (newAccessionCell.textContent == "\u200B") {
+      newAccessionCell.textContent = "N/A";
+    }
+
+    sheet.updateSpreadsheet(rowIsbn!);
+    sheet.renderSpreadsheet();
+    db.spreadsheets.where("isbn").equals(rowIsbn!).modify({
+      accession: newAccessionCell.textContent,
+    });
+  }
   onMount(async () => {
     sheet = SpreadSheet.getInstance();
     const data = await sheet.loadFromDatabase();
@@ -39,21 +55,23 @@
 
       newAccessionCell.addEventListener(
         "blur",
-        () => {
-          newAccessionCell.contentEditable = "false";
-          if (newAccessionCell.textContent == "\u200B") {
-            newAccessionCell.textContent = "N/A";
-          }
-
-          sheet.updateSpreadsheet(rowIsbn!);
-          sheet.renderSpreadsheet();
-          const dbIndex = db.spreadsheets.update(rowIsbn as unknown as ISpreadsheetData, {
-            accession: newAccessionCell.textContent,
-          });
-          console.log("dbIndex: ", dbIndex);
-        },
+        () => handleUpdate(newAccessionCell, rowIsbn!),
         { once: true },
       );
+
+      const onkeyDown = (e: KeyboardEvent) => {
+        console.log(e.key);
+
+        if (e.key === "Enter") {
+          e.preventDefault();
+          console.log("Key down Pressed");
+
+          handleUpdate(newAccessionCell, rowIsbn!);
+          newAccessionCell.removeEventListener("keydown", onkeyDown);
+        }
+      };
+
+      newAccessionCell.addEventListener("keydown", onkeyDown);
 
       sheet.renderSpreadsheet();
       console.log("Real Target: ", target);
@@ -61,14 +79,11 @@
       console.log(rowIsbn);
     });
 
- const timeOut = setTimeout(() => {
-    sheet.scrollToView();
-    clearTimeout(timeOut);
-  }, 500);
-  
+    const timeOut = setTimeout(() => {
+      sheet.scrollToView();
+      clearTimeout(timeOut);
+    }, 500);
   });
-
-  
 </script>
 
 <div class="isbn-details">
@@ -81,7 +96,7 @@
       </tr>
     </thead>
 
-    <tbody bind:this={tableBody}>
+    <tbody oncontextmenu={handleContextMenu} bind:this={tableBody}>
       {#each spreadsheetState.data as row}
         <tr>
           {#each Object.entries(row) as [_, cellValue]}
@@ -93,11 +108,16 @@
   </table>
 </div>
 
-
 <button
   onclick={() => sheet!.DownloadSpreadSheet.call(sheet)!}
   class="download-excel">Download Excel Sheet</button
 >
+
+<div bind:this={contextMenu} id="context_menu" class="hidden">
+  <ul>
+    <li id="delete_row">Delete Row</li>
+  </ul>
+</div>
 
 <style>
   .isbn-details {
@@ -150,8 +170,6 @@
     /* font-weight: bold; */
   }
 
-
-
   .download-excel {
     margin: 1rem auto 0;
     display: block;
@@ -178,5 +196,39 @@
 
   :global(td[contenteditable="true"]:empty::before) {
     content: "\200b"; /* Zero-width space to maintain height */
+  }
+
+  #context_menu {
+    display: block; /* Hide the menu by default */
+    position: absolute; /* Position it at the cursor location */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    /* padding: 10px; */
+    list-style: none;
+    z-index: 1000; /* Ensure it's on top of other elements */
+    cursor: pointer;
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
+  #context_menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #context_menu li {
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  #context_menu li:hover {
+    background-color: #f0f0f0;
+    background-color: hsl(0, 80%, 40%);
+    color: white;
   }
 </style>

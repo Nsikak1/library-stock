@@ -12,8 +12,9 @@
   import SpreadSheet from "./spreadsheet/sheetUtils.svelte.ts";
   import { db, type ISpreadsheetData } from "./db.ts";
   // let { jsonSpreadsheet = $bindable() } = $props();
-  let { message = $bindable(), receivedIsbn = $bindable() } = $props();
+  let { receivedIsbn = $bindable() } = $props();
 
+  let message: string = $state("");
   let eleArr: HTMLInputElement[];
   let isbnFound = $state({
     value: false,
@@ -213,7 +214,7 @@
   // svelte-ignore non_reactive_update
   let sheet: SpreadSheet;
   $effect(() => {
-    console.log("SEcond Effect");
+    console.log("Second Effect");
     // Only process specific messages that indicate a successful lookup
     if (
       message === "Isbn Found Please Input the accession Number" ||

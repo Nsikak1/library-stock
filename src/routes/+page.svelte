@@ -16,7 +16,7 @@
   let offline: HTMLDivElement;
   let firstRun: boolean = $state(true);
 
-  let message: string = $state("");
+  // let message: string = $state("");
   let presidents: {}[] = $state([]);
   let isbnDetails = $state("");
   let renderSpreadsheet = $state(false);
@@ -62,7 +62,7 @@ if (navigator.onLine) {
   <div bind:this={offline} class="offline">There is currently no internet connection</div>
   {#if !firstRun && renderSpreadsheet}
   <SpreadSheet />
-  <Input bind:message={message}/>
+  <Input />
 
   {:else }
   <!-- <FileUpload bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} /> -->
@@ -113,4 +113,5 @@ if (navigator.onLine) {
   outline: 2px dashed brown;
   visibility: hidden;
 }
+
 </style>

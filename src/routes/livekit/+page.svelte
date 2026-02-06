@@ -16,11 +16,11 @@
   
 
 
-  $effect(() => {
-    if (connected) {
-      window.location.assign("/spreadsheet")
-    }
-  })
+  // $effect(() => {
+  //   if (connected) {
+  //     // window.location.assign("/spreadsheet")
+  //   }
+  // })
 
 
   async function join() {

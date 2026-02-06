@@ -50,9 +50,10 @@ const db = new Dexie("SpreadsheetDatabase") as Dexie & {
 }
 
 // Schema declaration:
-db.version(1).stores({
-  spreadsheets: "&isbn, accession, book_name, book_type, author, published, num_of_pages, image_links, language", // primary key "accession"
+db.version(2).stores({
+  spreadsheets: "++, &isbn, accession, book_name, book_type, author, published, num_of_pages, image_links, language", // primary key "accession"
 })
+
 db.version(1).stores({
   settings: "key" // primary key "key"
 });
