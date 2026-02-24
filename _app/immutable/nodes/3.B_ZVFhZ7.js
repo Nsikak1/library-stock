@@ -1,25 +1,24 @@
-import { f as fa, a as ha } from "../chunks/Bw-Wuv52.js";
-import { o as da } from "../chunks/DzzNYz1_.js";
-import { T as va, j as vt, U as pa, x as ya, w as ma, h as ga, V as wa, p as $a, f as ba, c as pt, g as Ta, a as Ca, b as Pa, Q as _a, R as Aa, s as Sa } from "../chunks/SbAXgMIg.js";
-import { d as Ea } from "../chunks/k-CT1vo6.js";
-import { r as Oa } from "../chunks/HVy_KHCI.js";
-import { b as kr } from "../chunks/BOS2cBk9.js";
+import { f as fa, a as ha } from "../chunks/Dy7lmqI0.js";
+import { R as da, j as vt, T as va, y as pa, x as ya, h as ma, U as ga, p as wa, o as $a, f as ba, c as pt, g as Ta, a as Ca, b as Pa, P as _a, Q as Aa, s as Sa } from "../chunks/DUA4kTxm.js";
+import { d as Ea } from "../chunks/Bme71SXR.js";
+import { r as Oa } from "../chunks/CEiJdahZ.js";
+import { b as kr } from "../chunks/DamuyVK_.js";
 import { Z as xa, R as Dr } from "../chunks/B-6X-cLz.js";
 function Ra(d, S, R = S) {
   var j = /* @__PURE__ */ new WeakSet();
-  va(d, "input", async (c) => {
+  da(d, "input", async (c) => {
     var x = c ? d.defaultValue : d.value;
-    if (x = qt(d) ? Qt(x) : x, R(x), vt !== null && j.add(vt), await pa(), x !== (x = S())) {
+    if (x = qt(d) ? Qt(x) : x, R(x), vt !== null && j.add(vt), await va(), x !== (x = S())) {
       var rt = d.selectionStart, L = d.selectionEnd, Y = d.value.length;
       if (d.value = x ?? "", L !== null) {
         var z = d.value.length;
         rt === L && L === Y && z > Y ? (d.selectionStart = z, d.selectionEnd = z) : (d.selectionStart = rt, d.selectionEnd = Math.min(L, z));
       }
     }
-  }), (ga && d.defaultValue !== d.value || ya(S) == null && d.value) && (R(qt(d) ? Qt(d.value) : d.value), vt !== null && j.add(vt)), ma(() => {
+  }), (ma && d.defaultValue !== d.value || pa(S) == null && d.value) && (R(qt(d) ? Qt(d.value) : d.value), vt !== null && j.add(vt)), ya(() => {
     var c = S();
     if (d === document.activeElement) {
-      var x = wa ?? vt;
+      var x = ga ?? vt;
       if (j.has(x)) return;
     }
     qt(d) && c === Qt(d.value) || d.type === "date" && !c && !d.value || c !== d.value && (d.value = c ?? "");
@@ -1224,8 +1223,8 @@ async function Fa(d, S) {
   return xa(ja, d, S);
 }
 var Wa = fa('<div class="qr-code"></div> <main class="camera-container"><video id="scanner" width="400" height="320" autoplay></video> <button id="camera-button">Scan the barcode</button> <button id="camera-button">Take a picture</button> <canvas id="video-feed" width="400" height="320"></canvas> <div class="hi">Hi</div> <input id="send-message" type="text"/> <button>Send Message</button></main>', 3);
-function Ba(d, S) {
-  $a(S, true);
+function Ha(d, S) {
+  wa(S, true);
   let R, j, c = Ca("");
   const x = { video: { facingMode: "environment" } }, rt = { tryHarder: true, maxNumberOfSymbols: 1 };
   Dr("Hello World", { format: "QRCode", scale: 3 });
@@ -1248,7 +1247,7 @@ function Ba(d, S) {
       });
     }, "image/png")) : W.innerText = "Video not ready - try again";
   }
-  da(async () => {
+  $a(async () => {
     try {
       const F = await Dr("text", { format: "QRCode", scale: 5 });
       j.innerHTML = F.svg;
@@ -1271,5 +1270,5 @@ function Ba(d, S) {
 }
 Ea(["click"]);
 export {
-  Ba as component
+  Ha as component
 };

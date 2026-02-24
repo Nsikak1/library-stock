@@ -1,11 +1,11 @@
-import { y, z as p, A as g, B as b, C as S } from "./SbAXgMIg.js";
+import { z as b, A as p, B as g, C as y, D as S } from "./DUA4kTxm.js";
 const k = /* @__PURE__ */ new Set(), B = /* @__PURE__ */ new Set();
-function T(a) {
+function O(a) {
   for (var r = 0; r < a.length; r++) k.add(a[r]);
   for (var n of B) n(a);
 }
 let v = null;
-function q(a) {
+function T(a) {
   var _a;
   var r = this, n = r.ownerDocument, h = a.type, e = ((_a = a.composedPath) == null ? void 0 : _a.call(a)) || [], t = e[0] || a.target;
   v = a;
@@ -21,10 +21,10 @@ function q(a) {
     i <= s && (f = i);
   }
   if (t = e[f] || a.target, t !== r) {
-    y(a, "currentTarget", { configurable: true, get() {
+    b(a, "currentTarget", { configurable: true, get() {
       return t || n;
     } });
-    var m = b, w = S;
+    var m = y, w = S;
     p(null), g(null);
     try {
       for (var o, _ = []; t !== null; ) {
@@ -51,7 +51,7 @@ function q(a) {
 }
 export {
   k as a,
-  T as d,
-  q as h,
+  O as d,
+  T as h,
   B as r
 };

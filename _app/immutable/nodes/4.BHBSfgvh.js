@@ -1,28 +1,27 @@
-import { f as _, a as b, c as B } from "../chunks/Bw-Wuv52.js";
-import { o as $ } from "../chunks/DzzNYz1_.js";
-import { aP as Q, p as D, c as I, Q as k, R as x, b as H, a6 as O, E as W, f as q, g as E, a as U, s as R } from "../chunks/SbAXgMIg.js";
-import { d as z } from "../chunks/k-CT1vo6.js";
-import { p as G, i as P } from "../chunks/GWIgz6Mc.js";
+import { f as _, a as b, c as B } from "../chunks/Dy7lmqI0.js";
+import { aP as G, p as $, o as D, c as I, P as k, Q as x, b as H, a5 as O, G as Q, f as q, g as E, a as U, s as R } from "../chunks/DUA4kTxm.js";
+import { d as z } from "../chunks/Bme71SXR.js";
+import { p as W, i as P } from "../chunks/J6GTVhZb.js";
 import { R as A, a as w } from "../chunks/CKy_A0-a.js";
 import { R as V, S as j, A as J } from "../chunks/B-6X-cLz.js";
-import { b as L } from "../chunks/BOS2cBk9.js";
-import { b as F } from "../chunks/Bb7oIXJV.js";
+import { b as L } from "../chunks/DamuyVK_.js";
+import { b as F } from "../chunks/BZsgO9oN.js";
 import { r as K } from "../chunks/CYOjpWgn.js";
 const X = "";
 function Y(...l) {
   return F + X + K(l[0], l[1]);
 }
-const N = Q;
+const N = G;
 var Z = _('<main class="container svelte-1y75vyh"><h1 class="instruction">Please scan the QrCode with your Phone</h1> <div aria-controls="button" class="qrcode"></div></main>');
 function ee(l, d) {
-  D(d, true);
-  let u = G(d, "connected", 15);
+  $(d, true);
+  let u = W(d, "connected", 15);
   const o = new A();
   let e;
   const a = { scale: 10, format: "QRCode" };
   let s;
   const f = "ils-lib-room" + Math.floor(Math.random() * 1e3), t = "ils-user-" + Math.floor(Math.random() * 1e3), n = "wss://library-xs8xmdmu.livekit.cloud";
-  localStorage.setItem("url", n), $(async () => {
+  localStorage.setItem("url", n), D(async () => {
     try {
       const v = await V(f, a);
       e.innerHTML = v.svg, localStorage.setItem("room", f), localStorage.setItem("userId", t), console.log("roomName: ", f, `
@@ -87,15 +86,15 @@ async function ne(l) {
 }
 var ae = _('<button id="camera-button" class="svelte-12soy5r">Scan the barcode</button>'), re = _('<button id="camera-button" class="svelte-12soy5r">Take a picture</button>'), ce = _('<main class="camera-container svelte-12soy5r"><div class="video-container svelte-12soy5r"><video id="scanner" autoplay class="svelte-12soy5r"></video> <canvas id="video-feed" class="svelte-12soy5r"></canvas></div> <div class="message"></div> <div class="button-container svelte-12soy5r"><!> <button class="svelte-12soy5r">Reconnect</button></div></main>', 2);
 function se(l, d) {
-  D(d, true);
+  $(d, true);
   let u = O({ active: false }), o = O({ value: "" }), e = false, a, s = new A();
   const f = "ils-user-" + Math.floor(Math.random() * 1e3), t = "wss://library-xs8xmdmu.livekit.cloud";
   let n;
-  $(() => {
+  D(() => {
     window.localStorage.setItem("hasConnected", "false"), n = "https://library-backend-wbdw.onrender.com";
   }), console.log("Dev is active?: ", N), s.on(w.Connected, () => {
     console.log("Room Conneceted"), a && (a.innerText = "Joined room");
-  }), W(() => {
+  }), Q(() => {
     if (o.value && !e) console.log("in Scanned Value: ", o), fetch(`${n}/livekit/token?room=${encodeURIComponent(o.value)}&userId=${encodeURIComponent(f)}`).then((c) => c.json()).then((c) => {
       const h = c.token;
       console.log("Token: ", h), s.connect(t, h).then((T) => {
@@ -142,12 +141,12 @@ function se(l, d) {
 }
 z(["click"]);
 var ie = _('<div class="choose-action svelte-9pz7z5"><button id="receive" class="svelte-9pz7z5">Receive Isbn from Phone</button> <button id="send" class="svelte-9pz7z5">Send Isbn from phone</button></div>');
-function pe(l, d) {
-  D(d, true);
+function ye(l, d) {
+  $(d, true);
   let u = U("");
   new A();
   let o = U(false);
-  $(async () => {
+  D(async () => {
     J({ fireImmediately: true, overrides: { locateFile: (t, n) => t.endsWith(".wasm") ? (console.log("Path: ", t), Y("/") + t) : (console.log(`Prefix: ${n} 
 
     Path: ${t}`), n + t) } });
@@ -185,5 +184,5 @@ function pe(l, d) {
 }
 z(["click"]);
 export {
-  pe as component
+  ye as component
 };
