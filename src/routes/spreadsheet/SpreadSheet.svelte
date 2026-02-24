@@ -3,10 +3,46 @@
   import SpreadSheet, { labels } from "./sheetUtils.svelte.ts";
   import { spreadsheetState, handleContextMenu } from "./sheetUtils.svelte.ts";
   import { db, type ISpreadsheetData } from "../db.ts";
+  import { bookDetails } from '../globalState.svelte.ts'
 
   let sheet: SpreadSheet;
   let tableBody: HTMLElement;
   let contextMenu: HTMLDivElement;
+  let clickTimer: NodeJS.Timeout;
+ async function showBookDetails(event: MouseEvent) {
+
+  console.log("event.detail: ", event.detail);
+  
+  if (event.detail === 2){ 
+    console.log('Clearing Timer: ');
+    
+    clearTimeout(clickTimer)
+    return;
+  }
+  else {
+   clickTimer = setTimeout(async () => {
+
+
+    console.log(event);
+    const target = event.target as HTMLTableCellElement;
+    const isbn = target.parentElement?.querySelector('.isbn')?.textContent;
+
+    console.log("isbn from click: ", isbn);
+    
+    
+  const data = await db.spreadsheets.where('isbn').equals(isbn!).first();
+  if (data){ bookDetails.activeView = true;
+    bookDetails.data = data;
+  }
+  console.log(data);
+    
+    clearTimeout(clickTimer);
+  }, 200)
+
+}
+
+    
+  }
 
   function handleUpdate(
     newAccessionCell: HTMLTableCellElement,
@@ -31,14 +67,17 @@
     tableBody.addEventListener("dblclick", (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const activeRow = target.closest("tr") as HTMLTableRowElement;
-      const rowIsbn = activeRow.childNodes[2].textContent;
-      const accessionCell = activeRow.childNodes[0] as HTMLTableCellElement;
-
+      const rowIsbn = activeRow.querySelector('td:nth-of-type(3)')!.textContent;
+      const accessionCell = activeRow.querySelector('td') as HTMLTableCellElement;
+      console.log("activeRow: ", activeRow);
+      
       // Remove any existing blur listeners to prevent duplicates
       const clonedCell = accessionCell.cloneNode(true) as HTMLTableCellElement;
       accessionCell.parentNode?.replaceChild(clonedCell, accessionCell);
-      const newAccessionCell = activeRow.childNodes[0] as HTMLTableCellElement;
-
+      const newAccessionCell = activeRow.querySelector('td') as HTMLTableCellElement;
+      // const newAccessionCell = accessionCell;
+      console.log("newAccessionCell: ", newAccessionCell);
+      
       newAccessionCell.contentEditable = "true";
       if (newAccessionCell.textContent === "N/A") {
         newAccessionCell.textContent = "\u200B";
@@ -91,16 +130,25 @@
     <thead>
       <tr>
         {#each labels as label}
-          <th>{label}</th>
+          <th class="table-label">{label}</th>
         {/each}
       </tr>
     </thead>
 
-    <tbody oncontextmenu={handleContextMenu} bind:this={tableBody}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <tbody oncontextmenu={handleContextMenu} onclick={showBookDetails}  bind:this={tableBody}>
       {#each spreadsheetState.data as row}
-        <tr>
-          {#each Object.entries(row) as [_, cellValue]}
-            <td>{cellValue}</td>
+        <tr class="table-row">
+          {#each Object.entries(row) as [i, cellValue]}
+          {#if i === "image_links"}
+            <td class={i}>
+              <a href={cellValue as string} target="_blank" >{cellValue}</a>
+              </td>
+          {/if}
+          {#if i !== "image_links"}
+            <td class={i}>{cellValue}</td>
+          {/if}
           {/each}
         </tr>
       {/each}
@@ -108,10 +156,10 @@
   </table>
 </div>
 
-<button
+<!-- <button
   onclick={() => sheet!.DownloadSpreadSheet.call(sheet)!}
   class="download-excel">Download Excel Sheet</button
->
+> -->
 
 <div bind:this={contextMenu} id="context_menu" class="hidden">
   <ul>
@@ -130,7 +178,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 25px 0;
+    margin: 0;
     font-size: 0.9em;
     font-family: sans-serif;
     min-width: 400px;
@@ -170,7 +218,7 @@
     /* font-weight: bold; */
   }
 
-  .download-excel {
+  :global(.download-excel) {
     margin: 1rem auto 0;
     display: block;
     padding: 0.5rem 1rem;
@@ -230,5 +278,10 @@
     background-color: #f0f0f0;
     background-color: hsl(0, 80%, 40%);
     color: white;
+  }
+  :global(.image_links) {
+    max-width: 20ch;
+    overflow: hidden;
+    text-wrap: nowrap;
   }
 </style>

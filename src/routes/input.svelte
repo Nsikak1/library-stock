@@ -296,7 +296,7 @@
       const accessionNumber = accessionInput.value.trim();
 
       // Update the accession number in the database
-      message = sheet.updateSpreadsheet(isbnFound.isbn, accessionNumber);
+      message = sheet.updateSpreadsheet(isbnFound.isbn, accessionNumber)!;
       isbnFound.value = false;
     } else {
       await handleSearch();
@@ -304,6 +304,11 @@
   }}
   id="search"
   >{isbnFound.value ? "Update Accession Number" : "Search For ISBN"}</button
+>
+
+<button
+  onclick={() => sheet!.DownloadSpreadSheet.call(sheet)!}
+  class="download-excel">Download Excel Sheet</button
 >
 
 <style>

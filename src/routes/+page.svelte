@@ -6,6 +6,9 @@
   import FileUpload from "./file-upload.svelte";
   import CreateSpreadSheet from "./createSpreadsheet.svelte";
   import { db,type ISettings } from "./db";
+  import BookView from "./spreadsheet/BookView.svelte";
+  import { bookDetails } from "./globalState.svelte";
+  import serviceWorkerStr from "../lib/internet?url";
 
   interface President {
     Name: string;
@@ -13,13 +16,15 @@
   }
 
 
-  let offline: HTMLDivElement;
   let firstRun: boolean = $state(true);
 
   // let message: string = $state("");
   let presidents: {}[] = $state([]);
   let isbnDetails = $state("");
   let renderSpreadsheet = $state(false);
+
+ 
+
 
     if (browser) {
       const storedValue = localStorage.getItem("renderSpreadsheet");
@@ -31,38 +36,23 @@
   
 
 
-onMount(() => {
-  window.addEventListener('online', (event) => {
-  console.log("You have come online!");
-  // Update UI or re-queue requests here
-    offline.style.visibility = "hidden";
 
-});
-
-window.addEventListener('offline', (event) => {
-  console.log("You have gone offline!");
-  offline.style.visibility = "visible";
-  // Inform user or handle gracefully here
-});
-
-// Initial check on page load
-if (navigator.onLine) {
-  console.log("Currently online.");
-      offline.style.visibility = "hidden";
-
-} else {
-    offline.style.visibility = "visible";
-
-  console.log("Currently offline.");
-}
-})
-</script>
-
-<div>
-  <div bind:this={offline} class="offline">There is currently no internet connection</div>
+  </script>
+  
   {#if !firstRun && renderSpreadsheet}
-  <SpreadSheet />
-  <Input />
+  <div class="container">
+    <SpreadSheet />
+  <div class="content-wrapper">
+    <div class="input-column">
+      <Input />
+    </div>
+    {#if bookDetails.activeView}
+    <div class="book-view-column">
+      <BookView />
+    </div>
+    {/if}
+  </div>
+</div>
 
   {:else }
   <!-- <FileUpload bind:renderSpreadsheet={renderSpreadsheet} bind:jsonSpreadsheet={jsonSpreadsheet} /> -->
@@ -72,9 +62,41 @@ if (navigator.onLine) {
   {/if}
  <!-- <SpreadSheet /> -->
 <!-- <Input /> -->
-</div>
 
 <style>
+:global(body) {
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  justify-items: stretch;
+  height: 100vh;
+}
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+  margin: 1rem;
+}
+.input-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.book-view-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 33%;
+}
+
   .or {
     text-align: center;
     margin: 1rem 0;
@@ -97,21 +119,6 @@ if (navigator.onLine) {
     background-color: transparent;
     color: var(--cur-color)
   }
-}
-.offline {
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: brown;
-  color: white;
-  padding: 3px 0;
-  align-items: center;
-  z-index: 100;
-  justify-content: center;
-  outline: 2px dashed brown;
-  visibility: hidden;
 }
 
 </style>

@@ -15,10 +15,10 @@ export function handleContextMenu(event: MouseEvent) {
     menu.style.left = `${event.clientX}px`;
     menu.classList.remove("hidden");
 
-    document.getElementById('delete_row')!.onclick = () => { 
+    document.getElementById("delete_row")!.onclick = () => {
       const isbn = row.children[2]?.textContent?.trim() || "";
       console.log(isbn);
-      
+
       if (isbn) {
         const spreadSheet = SpreadSheet.getInstance();
         const rowIndex = spreadSheet.findRowIndexByIsbn(isbn);
@@ -40,15 +40,19 @@ export function handleContextMenu(event: MouseEvent) {
       }
       // Hide context menu after deletion
       menu.classList.add("hidden");
-     }
+    };
 
-    document.addEventListener("click", function (event) {
-      if (event.button !== 2) {
-        // Ensure it's a left-click or general click event
-        // menu.style.display = "none";
-        menu.classList.add("hidden");
-      }
-    }, { once: true } );
+    document.addEventListener(
+      "click",
+      function (event) {
+        if (event.button !== 2) {
+          // Ensure it's a left-click or general click event
+          // menu.style.display = "none";
+          menu.classList.add("hidden");
+        }
+      },
+      { once: true },
+    );
   }
 }
 export const spreadsheetState = $state({
@@ -94,8 +98,8 @@ export default class SpreadSheet {
       return;
     }
     this.workbook = utils.book_new();
-     const date = new Date();
-      const formattedDate = date.toDateString().split(" ").join("-");
+    const date = new Date();
+    const formattedDate = date.toDateString().split(" ").join("-");
 
     window.localStorage.setItem("begin_date", formattedDate);
     this.worksheet = utils.aoa_to_sheet([spreadsheetKeys]);
@@ -293,13 +297,10 @@ export default class SpreadSheet {
     const rowIndex = this.findRowIndexByIsbn(isbn);
     this.m_jsonSpreadsheet.splice(rowIndex, 1);
     this.worksheet = utils.json_to_sheet(this.m_jsonSpreadsheet);
-    const ans = await db.spreadsheets.where("isbn").equals(isbn).delete()
+    const ans = await db.spreadsheets.where("isbn").equals(isbn).delete();
     console.log("Deleting db: ", ans);
-    
-    
+
     const row = this.getRowElementByIndex(rowIndex);
-
-
   }
 
   public renderSpreadsheet() {
@@ -310,11 +311,14 @@ export default class SpreadSheet {
     const rowIndex = this.m_jsonSpreadsheet.findIndex(
       (row: any) => row["isbn"] === isbn,
     );
-    console.log("This jsonSpreadsheet: ", this.m_jsonSpreadsheet);
-    
+    console.log(
+      " Isbn is: " + isbn + " This jsonSpreadsheet: ",
+      this.m_jsonSpreadsheet,
+    );
+
     if (rowIndex === -1) {
-      const rowIndex = this.m_jsonSpreadsheet.findIndex(
-      (row: any) => Object.values(row).includes(isbn)
+      const rowIndex = this.m_jsonSpreadsheet.findIndex((row: any) =>
+        Object.values(row).includes(isbn),
       );
       console.log("rowIndex found by value: ", rowIndex);
       if (rowIndex === -1) {
@@ -327,7 +331,7 @@ export default class SpreadSheet {
   public getRowElementByIndex(index: number) {
     const tbody = document.querySelector("tbody");
 
-    const trEle = tbody?.children;
+    const trEle = tbody?.querySelectorAll("tr");
     const ele = trEle?.item(index) as HTMLTableRowElement;
     return ele;
   }
@@ -335,7 +339,7 @@ export default class SpreadSheet {
     // Use setTimeout to ensure DOM has updated
     const tbody = document.querySelector("tbody");
 
-    const trEle = tbody?.children;
+    const trEle = tbody?.querySelectorAll("tr");
     const ele = trEle?.item(index) as HTMLTableRowElement;
     const color = ele?.style?.backgroundColor;
 
@@ -389,7 +393,12 @@ export default class SpreadSheet {
       const begin_date = window.localStorage.getItem("begin_date") || "";
       const date = new Date();
       const formattedDate = date.toDateString().split(" ").join("-");
-      writeFile(workbook, begin_date ? "from" + begin_date + " to " + formattedDate + "-library_stock.xlsx" : formattedDate + "-library_stock.xlsx");
+      writeFile(
+        workbook,
+        begin_date
+          ? "from" + begin_date + " to " + formattedDate + "-library_stock.xlsx"
+          : formattedDate + "-library_stock.xlsx",
+      );
     } else {
       console.error("Workbook is not loaded.");
     }
