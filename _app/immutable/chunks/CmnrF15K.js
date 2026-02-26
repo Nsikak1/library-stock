@@ -9,7 +9,7 @@ import { s as bf } from "./CEiJdahZ.js";
 import { d as $f } from "./Bme71SXR.js";
 import { b as Ff } from "./DamuyVK_.js";
 import { i as I1 } from "./DsF2ImuW.js";
-import "./BZsgO9oN.js";
+import "./Dr7-BOgw.js";
 function Gs(e, r) {
   return r;
 }
@@ -18403,11 +18403,12 @@ async function kl(e) {
 }
 async function El(e) {
   const t = await (await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${e}&format=json&jscmd=data`)).json();
-  if (console.log("used OpenLibAPI: ", Object.keys(t).length !== 0), Object.keys(t).length !== 0) return ["openLib", t[`ISBN:${e}`]];
+  if (console.log("used OpenLibAPI: ", Object.keys(t).length !== 0), console.log(t), Object.keys(t).length !== 0) return ["openLib", t[`ISBN:${e}`]];
 }
 async function kE(e) {
   var _a2;
   const r = "https://corsproxy.io/?", t = `https://isbnsearch.org/isbn/${e}`;
+  console.log("Searching With isbndb");
   try {
     const n = await (await fetch(r + encodeURIComponent(t))).text(), s = new DOMParser().parseFromString(n, "text/html");
     console.log("doc: ", s);
@@ -18451,7 +18452,7 @@ async function Ks(e, r = false) {
     const v = Nt.getInstance(), d = v.findRowIndexByIsbn(s.isbn);
     return v.scrollToView(d), e.value = true, `You have done that isbn already the Book Name is: ${s.book_name}`;
   }
-  if ([n, t] = await kl(i) || await El(i) || await kE(i) || [null, null], t) {
+  if ([n, t] = await kl(i) || await El(i) || await kE(i) || [null, null], console.log("Inside handleIsbnlookup: ", t), t) {
     if (n === "isbndb") {
       console.log("IsbnDetails: ", t);
       let v = t.isbn;
